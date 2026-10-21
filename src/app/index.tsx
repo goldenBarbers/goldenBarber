@@ -2,95 +2,92 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image, // Importado para renderizar suas imagens futuramente
   Pressable,
   StyleSheet,
   ScrollView,
   SafeAreaView,
 } from 'react-native';
 
-// Dados simulados de serviços
-const SERVICOS = [
-  { id: '1', nome: 'Corte de Cabelo', duracao: '30 min', preco: 'R$ 45,00', icone: '✂️' },
-  { id: '2', nome: 'Barba Completa', duracao: '20 min', preco: 'R$ 35,00', icone: '🪒' },
-  { id: '3', nome: 'Combo Cabelo + Barba', duracao: '50 min', preco: 'R$ 70,00', icone: '💈' },
-];
-
-// Dados simulados de barbeiros
+// 1. DADOS DOS 3 BARBEIROS (Substitua os caminhos das imagens em 'imagem' quando tiver os arquivos)
 const BARBEIROS = [
-  { id: '1', nome: 'Qualquer um', nota: '★ 5.0', icone: '👥' },
-  { id: '2', nome: 'Carlos', nota: '★ 4.9', icone: '👨‍🦱' },
-  { id: '3', nome: 'Rafael', nota: '★ 4.8', icone: '🧔' },
+  {
+    id: '1',
+    nome: 'Guilherme Melos',
+    especialidade: 'Fade & Tesoura',
+    nota: '★ 5.0',
+    imagem: require('../../assets/images/barbers/guilherme.webp'), // IMAGEM 1
+  },
+  {
+    id: '2',
+    nome: 'Paulo Rogério',
+    especialidade: 'Mestre & Visagismo',
+    nota: '★ 4.9',
+    imagem: require('../../assets/images/barbers/paulo.webp'),     // IMAGEM 2
+  },
+  {
+    id: '3',
+    nome: 'Renan Pereira',
+    especialidade: 'Barba & Navalha',
+    nota: '★ 4.8',
+    imagem: require('../../assets/images/barbers/renan.png'),     // IMAGEM 3
+  },
 ];
 
-export default function TelaInicial() {
-  // Estados para controlar a seleção do usuário
+// 2. DADOS DOS 3 SERVIÇOS EM DESTAQUE
+const SERVICOS = [
+  {
+    id: '1',
+    nome: 'Corte de Cabelo',
+    duracao: '30 min',
+    preco: 'R$ 45,00',
+    // imagem: require('../../assets/images/services/corte-cabelo.jpg'),         // IMAGEM 4
+  },
+  {
+    id: '2',
+    nome: 'Barba & Toalha Quente',
+    duracao: '25 min',
+    preco: 'R$ 35,00',
+    // imagem: require('../../assets/images/services/barba-toalha-quente.jpg'),  // IMAGEM 5
+  },
+  {
+    id: '3',
+    nome: 'Combo Cabelo + Barba',
+    duracao: '50 min',
+    preco: 'R$ 70,00',
+    // imagem: require('../../assets/images/services/combo-cabelo-barba.jpg'),   // IMAGEM 6
+  },
+];
+
+export default function TelaInicialProfissional() {
+  const [barbeiroSelecionado, setBarbeiroSelecionado] = useState('2'); // Paulo Rogério selecionado por padrão
   const [servicoSelecionado, setServicoSelecionado] = useState('1');
-  const [barbeiroSelecionado, setBarbeiroSelecionado] = useState('1');
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* CONTEÚDO ROLÁVEL */}
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 1. CABEÇALHO */}
+        {/* CABEÇALHO DA BARBEARIA */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.saudacao}>Olá, Lucas 👋</Text>
-            <Text style={styles.subtitulo}>Qual o estilo de hoje?</Text>
+            <Text style={styles.subtituloHeader}>BEM-VINDO À</Text>
+            <Text style={styles.tituloHeader}>GOLDEN BARBER</Text>
           </View>
-          <View style={styles.headerAcoes}>
-            <View style={styles.iconeNotificacaoContainer}>
-              <Text style={styles.textoIcone}>🔔</Text>
-              <View style={styles.pontoNotificacao} />
-            </View>
-            <View style={styles.avatarContainer}>
-              <Text style={styles.textoAvatar}>L</Text>
-            </View>
+          <View style={styles.badgeStatus}>
+            <View style={styles.pontoVerde} />
+            <Text style={styles.textoStatus}>Aberto</Text>
           </View>
         </View>
 
-        {/* 2. SEÇÃO DE SERVIÇOS */}
+        {/* SEÇÃO 1: FOTOS DOS BARBEIROS (3 CARDS COM ESPAÇO PARA IMAGEM) */}
         <View style={styles.secao}>
-          <Text style={styles.tituloSecao}>Serviços</Text>
-          {SERVICOS.map((servico) => {
-            const isSelected = servicoSelecionado === servico.id;
-            return (
-              <Pressable
-                key={servico.id}
-                style={[
-                  styles.cardServico,
-                  isSelected && styles.cardServicoSelecionado,
-                ]}
-                onPress={() => setServicoSelecionado(servico.id)}
-              >
-                <View style={styles.iconeServicoBox}>
-                  <Text style={styles.iconeServicoText}>{servico.icone}</Text>
-                </View>
-                <View style={styles.infoServico}>
-                  <Text style={styles.nomeServico}>{servico.nome}</Text>
-                  <Text style={styles.duracaoServico}>{servico.duracao}</Text>
-                </View>
-                <View style={styles.precoECheckbox}>
-                  <Text style={styles.precoServico}>{servico.preco}</Text>
-                  <View
-                    style={[
-                      styles.checkbox,
-                      isSelected && styles.checkboxSelecionado,
-                    ]}
-                  >
-                    {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                  </View>
-                </View>
-              </Pressable>
-            );
-          })}
-        </View>
+          <View style={styles.headerSecao}>
+            <Text style={styles.tituloSecao}>Nossos Barbeiros</Text>
+            <Text style={styles.subtituloSecao}>Escolha seu profissional</Text>
+          </View>
 
-        {/* 3. SEÇÃO DE BARBEIROS (CARROSSEL HORIZONTAL) */}
-        <View style={styles.secao}>
-          <Text style={styles.tituloSecao}>Profissional</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -107,31 +104,94 @@ export default function TelaInicial() {
                   ]}
                   onPress={() => setBarbeiroSelecionado(barbeiro.id)}
                 >
-                  <View style={styles.avatarBarbeiro}>
-                    <Text style={styles.iconeBarbeiroText}>{barbeiro.icone}</Text>
+                  {/* ESPAÇO RESERVADO PARA FOTO DO BARBEIRO */}
+                  <View style={styles.containerFotoBarbeiro}>
+                    {barbeiro.imagem ? (
+                      <Image source={barbeiro.imagem} style={styles.fotoBarbeiro} />
+                    ) : (
+                      <View style={styles.placeholderFotoBarbeiro}>
+                        <Text style={styles.textoPlaceholderFoto}>📷 Foto</Text>
+                      </View>
+                    )}
+                    <View style={styles.badgeNota}>
+                      <Text style={styles.textoBadgeNota}>{barbeiro.nota}</Text>
+                    </View>
                   </View>
-                  <Text style={styles.nomeBarbeiro} numberOfLines={1}>
-                    {barbeiro.nome}
+
+                  <Text style={styles.nomeBarbeiro}>{barbeiro.nome}</Text>
+                  <Text style={styles.especialidadeBarbeiro}>
+                    {barbeiro.especialidade}
                   </Text>
-                  <Text style={styles.notaBarbeiro}>{barbeiro.nota}</Text>
                 </Pressable>
               );
             })}
           </ScrollView>
         </View>
+
+        {/* SEÇÃO 2: SERVIÇOS (3 CARDS COM ESPAÇO PARA IMAGEM) */}
+        <View style={styles.secao}>
+          <View style={styles.headerSecao}>
+            <Text style={styles.tituloSecao}>Serviços em Destaque</Text>
+            <Text style={styles.subtituloSecao}>Selecione o atendimento</Text>
+          </View>
+
+          {SERVICOS.map((servico) => {
+            const isSelected = servicoSelecionado === servico.id;
+            return (
+              <Pressable
+                key={servico.id}
+                style={[
+                  styles.cardServico,
+                  isSelected && styles.cardServicoSelecionado,
+                ]}
+                onPress={() => setServicoSelecionado(servico.id)}
+              >
+                {/* ESPAÇO RESERVADO PARA IMAGEM DO SERVIÇO */}
+                <View style={styles.containerImagemServico}>
+                  {servico.imagem ? (
+                    <Image source={servico.imagem} style={styles.imagemServico} />
+                  ) : (
+                    <View style={styles.placeholderImagemServico}>
+                      <Text style={styles.textoPlaceholderFoto}>📷 Imagem</Text>
+                    </View>
+                  )}
+                </View>
+
+                {/* DETALHES DO SERVIÇO */}
+                <View style={styles.infoServico}>
+                  <Text style={styles.nomeServico}>{servico.nome}</Text>
+                  <Text style={styles.duracaoServico}>⏱️ {servico.duracao}</Text>
+                  <Text style={styles.precoServico}>{servico.preco}</Text>
+                </View>
+
+                {/* BOTÃO/RADIO DE SELEÇÃO */}
+                <View style={styles.containerRadio}>
+                  <View
+                    style={[
+                      styles.radioOuter,
+                      isSelected && styles.radioOuterSelecionado,
+                    ]}
+                  >
+                    {isSelected && <View style={styles.radioInner} />}
+                  </View>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
       </ScrollView>
 
-      {/* 4. BOTÃO DE AÇÃO PRINCIPAL (CTA FIXO) */}
+      {/* BOTÃO FIXO DE AGENDAMENTO */}
       <View style={styles.containerCTA}>
         <Pressable style={styles.botaoCTA}>
-          <Text style={styles.textoBotaoCTA}>Avançar para Horários</Text>
+          <Text style={styles.textoBotaoCTA}>Continuar Agendamento</Text>
         </Pressable>
       </View>
 
-      {/* 5. BARRA DE NAVEGAÇÃO INFERIOR */}
+      {/* BARRA INFERIOR DE NAVEGAÇÃO */}
       <View style={styles.bottomNav}>
         <Pressable style={styles.navItem}>
-          <Text style={styles.navIconeAtivo}>🏠</Text>
+          <Text style={styles.navIconeAtivo}>💈</Text>
           <Text style={styles.navTextoAtivo}>Início</Text>
         </Pressable>
         <Pressable style={styles.navItem}>
@@ -147,7 +207,7 @@ export default function TelaInicial() {
   );
 }
 
-// ESTILOS COM PALETA VINTAGE (#121212, #1E1E1E, #C5A059, #F5F5F5, #9E9E9E)
+// ESTILIZAÇÃO - PALETA BARBER VINTAGE (#121212, #1E1E1E, #C5A059, #F5F5F5, #9E9E9E)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -156,9 +216,9 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 20,
   },
-  
+
   // Header
   header: {
     flexDirection: 'row',
@@ -167,66 +227,128 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     marginTop: 8,
   },
-  saudacao: {
-    fontSize: 20,
+  subtituloHeader: {
+    fontSize: 11,
+    color: '#C5A059',
+    fontWeight: 'bold',
+    letterSpacing: 1.5,
+  },
+  tituloHeader: {
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#F5F5F5',
   },
-  subtitulo: {
-    fontSize: 14,
-    color: '#9E9E9E',
-    marginTop: 2,
-  },
-  headerAcoes: {
+  badgeStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  iconeNotificacaoContainer: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  textoIcone: {
-    fontSize: 18,
-  },
-  pontoNotificacao: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#C5A059',
-  },
-  avatarContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     backgroundColor: '#1E1E1E',
-    borderWidth: 1.5,
-    borderColor: '#C5A059',
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#333333',
   },
-  textoAvatar: {
+  pontoVerde: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#2E7D32',
+    marginRight: 6,
+  },
+  textoStatus: {
+    fontSize: 12,
     color: '#F5F5F5',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 
-  // Seções Gerais
+  // Estrutura das Seções
   secao: {
-    marginBottom: 24,
+    marginBottom: 28,
+  },
+  headerSecao: {
+    marginBottom: 14,
   },
   tituloSecao: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#F5F5F5',
-    marginBottom: 12,
+  },
+  subtituloSecao: {
+    fontSize: 13,
+    color: '#9E9E9E',
+    marginTop: 2,
   },
 
-  // Cards de Serviço
+  // Carrossel e Cards dos Barbeiros
+  carrosselBarbeiros: {
+    paddingRight: 16,
+  },
+  cardBarbeiro: {
+    width: 150,
+    backgroundColor: '#1E1E1E',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333333',
+    padding: 12,
+    marginRight: 14,
+  },
+  cardBarbeiroSelecionado: {
+    borderColor: '#C5A059',
+    borderWidth: 1.5,
+  },
+  containerFotoBarbeiro: {
+    width: '100%',
+    height: 140, // Proporção ideal para foto vertical de perfil
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#121212',
+    marginBottom: 10,
+    position: 'relative',
+  },
+  fotoBarbeiro: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  placeholderFotoBarbeiro: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333333',
+    borderStyle: 'dashed',
+    borderRadius: 8,
+  },
+  textoPlaceholderFoto: {
+    color: '#9E9E9E',
+    fontSize: 12,
+  },
+  badgeNota: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(18, 18, 18, 0.85)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  textoBadgeNota: {
+    color: '#C5A059',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  nomeBarbeiro: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#F5F5F5',
+  },
+  especialidadeBarbeiro: {
+    fontSize: 12,
+    color: '#9E9E9E',
+    marginTop: 2,
+  },
+
+  // Cards dos Serviços
   cardServico: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -234,111 +356,79 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#333333',
-    padding: 16,
+    padding: 12,
     marginBottom: 12,
   },
   cardServicoSelecionado: {
     borderColor: '#C5A059',
     borderWidth: 1.5,
   },
-  iconeServicoBox: {
-    width: 44,
-    height: 44,
+  containerImagemServico: {
+    width: 80,
+    height: 80, // Proporção 1:1 para card de serviço em lista
     borderRadius: 8,
+    overflow: 'hidden',
     backgroundColor: '#121212',
+  },
+  imagemServico: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  placeholderImagemServico: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  iconeServicoText: {
-    fontSize: 20,
+    borderWidth: 1,
+    borderColor: '#333333',
+    borderStyle: 'dashed',
+    borderRadius: 8,
   },
   infoServico: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 14,
   },
   nomeServico: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
     color: '#F5F5F5',
   },
   duracaoServico: {
-    fontSize: 13,
-    color: '#9E9E9E',
-    marginTop: 2,
-  },
-  precoECheckbox: {
-    alignItems: 'flex-end',
-  },
-  precoServico: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#C5A059',
-    marginBottom: 6,
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    borderColor: '#9E9E9E',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxSelecionado: {
-    backgroundColor: '#C5A059',
-    borderColor: '#C5A059',
-  },
-  checkmark: {
-    color: '#121212',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-
-  // Carrossel de Barbeiros
-  carrosselBarbeiros: {
-    paddingRight: 16,
-  },
-  cardBarbeiro: {
-    width: 110,
-    height: 132,
-    backgroundColor: '#1E1E1E',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#333333',
-    padding: 12,
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  cardBarbeiroSelecionado: {
-    borderColor: '#C5A059',
-    borderWidth: 2,
-  },
-  avatarBarbeiro: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#121212',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#333333',
-  },
-  iconeBarbeiroText: {
-    fontSize: 22,
-  },
-  nomeBarbeiro: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#F5F5F5',
-    marginTop: 8,
-  },
-  notaBarbeiro: {
     fontSize: 12,
     color: '#9E9E9E',
     marginTop: 4,
   },
+  precoServico: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#C5A059',
+    marginTop: 6,
+  },
 
-  // Botão CTA Fixo
+  // Controles de Seleção Radio
+  containerRadio: {
+    paddingLeft: 8,
+  },
+  radioOuter: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: '#9E9E9E',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radioOuterSelecionado: {
+    borderColor: '#C5A059',
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#C5A059',
+  },
+
+  // Botão Fixo CTA
   containerCTA: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -357,7 +447,7 @@ const styles = StyleSheet.create({
     color: '#121212',
   },
 
-  // Navigation Bar Inferior
+  // Menu Inferior
   bottomNav: {
     flexDirection: 'row',
     height: 64,
@@ -373,7 +463,7 @@ const styles = StyleSheet.create({
   },
   navIcone: {
     fontSize: 18,
-    opacity: 0.5,
+    opacity: 0.4,
   },
   navIconeAtivo: {
     fontSize: 18,
