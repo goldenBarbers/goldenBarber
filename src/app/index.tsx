@@ -406,7 +406,10 @@ export default function TelaInicialEscandinava() {
           </Text>
         </View>
 
-        <Pressable style={styles.btnCTA}>
+        <Pressable
+          style={styles.btnCTA}
+          onPress={() => router.push('/agenda')}
+        >
           <Text style={styles.txtBtnCTA}>
             AVANÇAR • R$ {valorTotalCalculado},00
           </Text>
@@ -426,11 +429,17 @@ export default function TelaInicialEscandinava() {
           <Text style={styles.navIcone}>🛍️</Text>
           <Text style={styles.navTexto}>Produtos</Text>
         </Pressable>
-        <Pressable style={styles.navItem}>
+        <Pressable
+          style={styles.navItem}
+          onPress={() => router.push('/agenda')}
+        >
           <Text style={styles.navIcone}>📅</Text>
           <Text style={styles.navTexto}>Agenda</Text>
         </Pressable>
-        <Pressable style={styles.navItem}>
+        <Pressable
+          style={styles.navItem}
+          onPress={() => router.push('/perfil')}
+        >
           <Text style={styles.navIcone}>👤</Text>
           <Text style={styles.navTexto}>Perfil</Text>
         </Pressable>
