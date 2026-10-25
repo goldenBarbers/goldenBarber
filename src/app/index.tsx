@@ -150,7 +150,7 @@ export default function Index() {
             ]}
           >
             <Image
-              source={require('../../assets/images/logo.png')}
+              source={require('../../assets/images/homepage/logo.png')}
               style={styles.logo}
               resizeMode="contain"
             />
@@ -174,7 +174,7 @@ export default function Index() {
             2. BANNER PRINCIPAL (HERO)
         ========================================== */}
         <ImageBackground
-          source={require('../../assets/images/barbeiro-e-ambiente.jpg')}
+          source={require('../../assets/images/homepage/barbeiro-e-ambiente.jpg')}
           style={[styles.banner]}
           imageStyle={styles.imagemBanner}
           resizeMode="cover"
@@ -226,7 +226,7 @@ export default function Index() {
               ]}
             >
               <CardDestaque
-                imagem={require('../../assets/images/loja.png')}
+                imagem={require('../../assets/images/homepage/loja.png')}
                 titulo="Loja Autoral"
                 descricao="Produtos exclusivos da marca Golden Barber: pomadas modeladoras, óleos hidratantes para barba e shampoos especiais."
                 destaque
@@ -235,7 +235,7 @@ export default function Index() {
               />
 
               <CardDestaque
-                imagem={require('../../assets/images/agendamento.png')}
+                imagem={require('../../assets/images/homepage/agendamento.png')}
                 titulo="Agendamento"
                 descricao="Escolha o serviço desejado, seu barbeiro de preferência, a data e o melhor horário disponível para você."
                 telaGrande={telaGrande}
@@ -243,7 +243,7 @@ export default function Index() {
               />
 
               <CardDestaque
-                imagem={require('../../assets/images/trabalhos.png')}
+                imagem={require('../../assets/images/homepage/trabalhos.png')}
                 titulo="Trabalhos"
                 descricao="Confira a galeria de trabalhos realizados por nossa equipe de especialistas e inspire-se para seu próximo visual."
                 telaGrande={telaGrande}
@@ -311,7 +311,7 @@ export default function Index() {
               ]}
             >
               <Image
-                source={require('../../assets/images/logo.png')}
+                source={require('../../assets/images/homepage/logo.png')}
                 style={styles.logoRodape}
                 resizeMode="contain"
               />

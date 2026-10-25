@@ -142,7 +142,7 @@ export default function Agenda() {
           <View style={[styles.cabecalho, telaGrande && styles.cabecalhoGrande]}>
             <TouchableOpacity onPress={() => router.push('/')}>
               <Image
-                source={require('../../assets/images/logo.png')}
+                source={require('../../assets/images/homepage/logo.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -175,7 +175,7 @@ export default function Agenda() {
             2. HERO / BANNER SUPERIOR
         ========================================== */}
         <ImageBackground
-          source={require('../../assets/images/barbeiro-e-ambiente.jpg')}
+          source={require('../../assets/images/homepage/barbeiro-e-ambiente.jpg')}
           style={styles.heroBanner}
           imageStyle={styles.heroBannerImg}
           resizeMode="cover"
@@ -452,7 +452,7 @@ export default function Agenda() {
           <View style={styles.rodapeInner}>
             <View style={[styles.conteudoRodape, telaGrande && styles.conteudoRodapeGrande]}>
               <Image
-                source={require('../../assets/images/logo.png')}
+                source={require('../../assets/images/homepage/logo.png')}
                 style={styles.logoRodape}
                 resizeMode="contain"
               />

@@ -71,42 +71,42 @@ const LISTA_TRABALHOS: TrabalhoItem[] = [
     titulo: 'Fade Americano',
     categoria: 'Cabelo',
     descricao: 'Degradê suave e bem alinhado com finalização em pomada fosca.',
-    imagem: require('../../assets/images/trabalhos.png'),
+    imagem: require('../../assets/images/homepage/trabalhos.png'),
   },
   {
     id: '2',
     titulo: 'Barba Lenhador Tradicional',
     categoria: 'Barba',
     descricao: 'Modelagem com toalha quente, alinhamento navalhado e óleo hidratante.',
-    imagem: require('../../assets/images/barbeiro-e-ambiente.jpg'),
+    imagem: require('../../assets/images/homepage/barbeiro-e-ambiente.jpg'),
   },
   {
     id: '3',
     titulo: 'Corte Social Clássico',
     categoria: 'Cabelo',
     descricao: 'Estilo executivo atemporal para homens que buscam sobriedade e elegância.',
-    imagem: require('../../assets/images/trabalhos.png'),
+    imagem: require('../../assets/images/homepage/trabalhos.png'),
   },
   {
     id: '4',
     titulo: 'Degradê Navalhado & Beard Combo',
     categoria: 'Combo',
     descricao: 'Harmonização completa de cabelo e barba com acabamento na navalha.',
-    imagem: require('../../assets/images/barbeiro-e-ambiente.jpg'),
+    imagem: require('../../assets/images/homepage/barbeiro-e-ambiente.jpg'),
   },
   {
     id: '5',
     titulo: 'Barboterapia Premium',
     categoria: 'Barba',
     descricao: 'Tratamento relaxante de esfoliação, vapor de ozônio e óleos essenciais.',
-    imagem: require('../../assets/images/trabalhos.png'),
+    imagem: require('../../assets/images/homepage/trabalhos.png'),
   },
   {
     id: '6',
     titulo: 'Styling & Pigmentação',
     categoria: 'Especial',
     descricao: 'Preenchimento discreto de falhas e definição perfeita dos contornos.',
-    imagem: require('../../assets/images/barbeiro-e-ambiente.jpg'),
+    imagem: require('../../assets/images/homepage/barbeiro-e-ambiente.jpg'),
   },
 ];
 
@@ -163,7 +163,7 @@ export default function Trabalhos() {
           >
             <TouchableOpacity onPress={() => router.push('/')}>
               <Image
-                source={require('../../assets/images/logo.png')}
+                source={require('../../assets/images/homepage/logo.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -345,7 +345,7 @@ export default function Trabalhos() {
               ]}
             >
               <Image
-                source={require('../../assets/images/logo.png')}
+                source={require('../../assets/images/homepage/logo.png')}
                 style={styles.logoRodape}
                 resizeMode="contain"
               />
