@@ -40,7 +40,7 @@ const CATALOGO_PRODUTOS = [
     preco: 'R$ 62,00',
     precoNum: 62,
     categoria: 'Cabelo',
-    imagem: { uri: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400' },
+    imagem: require('../../assets/images/products/pomada.jpg'),
   },
   {
     id: 'p2',
@@ -50,7 +50,7 @@ const CATALOGO_PRODUTOS = [
     preco: 'R$ 54,00',
     precoNum: 54,
     categoria: 'Barba',
-    imagem: { uri: 'https://images.unsplash.com/photo-1621607512214-68297480165e?w=400' },
+    imagem: require('../../assets/images/products/oleo.jpg'),
   },
   {
     id: 'p3',
@@ -60,7 +60,7 @@ const CATALOGO_PRODUTOS = [
     preco: 'R$ 48,00',
     precoNum: 48,
     categoria: 'Barba',
-    imagem: { uri: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400' },
+    imagem: require('../../assets/images/products/balm.jpg'),
   },
   {
     id: 'p4',
@@ -70,7 +70,7 @@ const CATALOGO_PRODUTOS = [
     preco: 'R$ 58,00',
     precoNum: 58,
     categoria: 'Tratamento',
-    imagem: { uri: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400' },
+    imagem: require('../../assets/images/products/shampoo.jpg'),
   },
 ];
 

@@ -50,19 +50,19 @@ const BARBEIROS = [
   {
     id: '1',
     nome: 'Guilherme',
-    avaliacao: '4.9',
+    avaliacao: '5.0',
     imagem: require('../../assets/images/barbers/guilherme.webp'),
   },
   {
     id: '2',
     nome: 'Paulo',
-    avaliacao: '4.8',
+    avaliacao: '4.9',
     imagem: require('../../assets/images/barbers/paulo.webp'),
   },
   {
     id: '3',
     nome: 'Renan',
-    avaliacao: '4.9',
+    avaliacao: '4.8',
     imagem: require('../../assets/images/barbers/renan.png'),
   },
 ];
