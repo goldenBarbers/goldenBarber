@@ -1,980 +1,712 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   Image,
-  Pressable,
-  StyleSheet,
+  ImageBackground,
   ScrollView,
-  SafeAreaView,
-  Modal,
+  StatusBar,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  useWindowDimensions,
 } from 'react-native';
-import { Video, ResizeMode } from 'expo-av';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
-// ----------------------------------------------------------------------
-// 0. DADOS LOCAIS (ESTILO ESCANDINAVO MINIMALISTA)
-// ----------------------------------------------------------------------
+// =====================================================
+// GOLDEN BARBER
+// Ficheiro: src/app/index.tsx
+// =====================================================
 
-const LOGO_BARBEARIA = require('../../assets/images/logo.png');
+const CORES = {
+  fundo: '#0f1314',
+  marrom: '#2c251d',
+  dourado: '#bb975a',
+  texto: '#F4F0E8',
+  cinza: '#A59A8B',
+  card: '#151817',
+  avaliacoesFundo: '#151817',
+  cardAvaliacao: '#242A28',
+};
 
-const CATEGORIAS = ['Todos', 'Cabelo', 'Barba', 'Combos Especiais'];
+interface BotaoProps {
+  titulo: string;
+  destaque?: boolean;
+  onPress: () => void;
+}
 
-const BARBEIROS = [
-  {
-    id: '1',
-    nome: 'Guilherme Melos',
-    especialidade: 'Especialista em Corte & Tesoura',
-    nota: '★ 5.0',
-    imagem: require('../../assets/images/barbers/guilherme.webp'),
-    videoSource: { uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' },
-  },
-  {
-    id: '2',
-    nome: 'Paulo Rogério',
-    especialidade: 'Visagismo Escandinavo',
-    nota: '★ 4.9',
-    imagem: require('../../assets/images/barbers/paulo.webp'),
-    videoSource: { uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' },
-  },
-  {
-    id: '3',
-    nome: 'Renan Pereira',
-    especialidade: 'Cuidado & Navalha Clássica',
-    nota: '★ 4.8',
-    imagem: require('../../assets/images/barbers/renan.png'),
-    videoSource: { uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' },
-  },
-];
+function Botao({ titulo, destaque = false, onPress }: BotaoProps) {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.botao,
+        destaque ? styles.botaoDestaque : styles.botaoContorno,
+      ]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <Text
+        style={[
+          styles.textoBotao,
+          destaque ? styles.textoBotaoDestaque : styles.textoBotaoContorno,
+        ]}
+      >
+        {titulo}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 
-const SERVICOS = [
-  {
-    id: '1',
-    nome: 'Corte de Cabelo Minimalista',
-    subtitulo: 'Análise de caimento natural, lavagem orgânica e alinhamento',
-    duracao: '40 min',
-    preco: 'R$ 65,00',
-    precoNum: 65,
-    categoria: 'Cabelo',
-    imagem: require('../../assets/images/services/corte.jpg'),
-  },
-  {
-    id: '2',
-    nome: 'Ritual de Barba & Vapor',
-    subtitulo: 'Toalha aquecida, óleos botânicos e alinhamento de precisão',
-    duracao: '35 min',
-    preco: 'R$ 50,00',
-    precoNum: 50,
-    categoria: 'Barba',
-    imagem: require('../../assets/images/services/barba.jpg'),
-  },
-  {
-    id: '3',
-    nome: 'Experiência Completa Nórdica',
-    subtitulo: 'Corte artesanal, ritual de barba completo e higienização capilar',
-    duracao: '75 min',
-    preco: 'R$ 105,00',
-    precoNum: 105,
-    categoria: 'Combos Especiais',
-    imagem: require('../../assets/images/services/combo.jpg'),
-  },
-];
+interface CardProps {
+  imagem: any;
+  titulo: string;
+  descricao: string;
+  destaque?: boolean;
+  telaGrande?: boolean;
+  onPress: () => void;
+}
 
-// ----------------------------------------------------------------------
-// COMPONENTE PRINCIPAL
-// ----------------------------------------------------------------------
-export default function TelaInicialEscandinava() {
+function CardDestaque({
+  imagem,
+  titulo,
+  descricao,
+  destaque = false,
+  telaGrande = false,
+  onPress,
+}: CardProps) {
+  return (
+    <TouchableOpacity
+      style={[
+        styles.card,
+        telaGrande ? styles.cardGrande : styles.cardMobile,
+        destaque && styles.cardDestaque,
+      ]}
+      onPress={onPress}
+      activeOpacity={0.85}
+    >
+      <Image source={imagem} style={styles.imagemCard} resizeMode="cover" />
+
+      <View style={styles.conteudoCard}>
+        <Text style={[styles.tituloCard, destaque && styles.textoEscuro]}>
+          {titulo}
+        </Text>
+
+        <Text
+          style={[
+            styles.descricaoCard,
+            destaque && styles.descricaoDestaque,
+          ]}
+        >
+          {descricao}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+export default function Index() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
+  const [telaGrande, setTelaGrande] = useState(false);
 
-  const [barbeiroSelecionado, setBarbeiroSelecionado] = useState('2');
-  const [servicoSelecionado, setServicoSelecionado] = useState('1');
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState('Todos');
-  const [barbeiroVideoModal, setBarbeiroVideoModal] = useState<any>(null);
+  useEffect(() => {
+    setTelaGrande(width >= 768);
+  }, [width]);
 
-  const servicosFiltrados = SERVICOS.filter((servico) => {
-    if (categoriaSelecionada === 'Todos') return true;
-    return servico.categoria === categoriaSelecionada;
-  });
+  const whatsapp = '5511999999999';
 
-  const servicoAtual = SERVICOS.find((s) => s.id === servicoSelecionado);
-  const valorTotalCalculado = servicoAtual ? servicoAtual.precoNum : 0;
+  const abrirWhatsApp = () => {
+    Linking.openURL(`https://wa.me/${whatsapp}`);
+  };
+
+  const abrirInstagram = () => {
+    Linking.openURL('https://www.instagram.com/');
+  };
+
+  const navegacaoMenu: Record<string, () => void> = {
+    'Início': () => { },
+    'Loja': () => router.push('/produtos'),
+    'Agendar': () => router.push('/agenda'),
+    'Trabalhos': () => router.push('/trabalhos'), // <-- adicione esta linha
+    'Minha Conta': () => router.push('/perfil'),
+    'Login': () => router.push('/login'),
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* ========================================== */}
-        {/* 1. CABEÇALHO ESCANDINAVO                   */}
-        {/* ========================================== */}
-        <View style={styles.topHeader}>
-          <View style={styles.containerLogo}>
+    <SafeAreaView style={styles.tela}>
+      <StatusBar barStyle="light-content" />
+
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* ==========================================
+            1. CABEÇALHO
+        ========================================== */}
+        <View style={styles.cabecalhoWrapper}>
+          <View
+            style={[
+              styles.cabecalho,
+              telaGrande && styles.cabecalhoGrande,
+            ]}
+          >
             <Image
-              source={LOGO_BARBEARIA}
-              style={styles.logoSimboloImage}
+              source={require('../../assets/images/homepage/logo.png')}
+              style={styles.logo}
               resizeMode="contain"
             />
-            <View style={styles.textoBrandContainer}>
-              <Text style={styles.textoLogoPequeno}>BARBEARIA & ESTÚDIO</Text>
-              <Text style={styles.textoLogoGrande}>GOLDEN BARBER</Text>
+
+            <View style={styles.menu}>
+              {['Início', 'Loja', 'Agendar', 'Trabalhos', 'Minha Conta', 'Login'].map((item) => (
+                <TouchableOpacity
+                  key={item}
+                  style={styles.itemMenu}
+                  onPress={navegacaoMenu[item]}
+                >
+                  <Text style={styles.textoMenu}>{item}</Text>
+                </TouchableOpacity>
+              ),
+              )}
             </View>
           </View>
-
-          <View style={styles.badgeStatus}>
-            <View style={styles.pontoVerde} />
-            <Text style={styles.textoStatus}>ABERTO</Text>
-          </View>
         </View>
 
-        {/* ========================================== */}
-        {/* 2. BANNER MINIMALISTA (HERO)               */}
-        {/* ========================================== */}
-        <View style={styles.heroBanner}>
-          <Text style={styles.heroTag}>DESIGN & CUIDADO MASCULINO</Text>
-          <Text style={styles.heroTitulo}>Simplicidade & Precisão</Text>
-          <Text style={styles.heroSubtitulo}>
-            Agendamentos descomplicados com foco no seu bem-estar e estilo natural.
-          </Text>
-        </View>
+        {/* ==========================================
+            2. BANNER PRINCIPAL (HERO)
+        ========================================== */}
+        <ImageBackground
+          source={require('../../assets/images/homepage/barbeiro-e-ambiente.jpg')}
+          style={[styles.banner]}
+          imageStyle={styles.imagemBanner}
+          resizeMode="cover"
+        >
+          <View style={styles.sombraBanner} />
 
-        {/* ========================================== */}
-        {/* 3. SEÇÃO BARBEIROS (CARROSSEL)             */}
-        {/* ========================================== */}
-        <View style={styles.secao}>
-          <View style={styles.headerSecao}>
-            <Text style={styles.tituloSecao}>Profissionais</Text>
-            <Text style={styles.subtituloSecao}>Selecione quem atenderá você hoje</Text>
-          </View>
+          <View style={styles.bannerConteudoWrapper}>
+            <View style={styles.bannerConteudo}>
+              <Text style={styles.tituloBanner}>
+                Mais que um corte,{'\n'}um estilo de vida
+              </Text>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carrosselBarbeiros}
-          >
-            {BARBEIROS.map((barbeiro) => {
-              const isSelected = barbeiroSelecionado === barbeiro.id;
-              return (
-                <Pressable
-                  key={barbeiro.id}
-                  style={[
-                    styles.cardBarbeiro,
-                    isSelected && styles.cardBarbeiroSelecionado,
-                  ]}
-                  onPress={() => setBarbeiroSelecionado(barbeiro.id)}
-                >
-                  <View style={styles.containerFotoBarbeiro}>
-                    <Image source={barbeiro.imagem} style={styles.fotoBarbeiro} />
+              <Text style={styles.textoBanner}>
+                Atendimento de alto padrão, ambiente sofisticado e produtos de
+                primeira linha para o homem moderno.
+              </Text>
 
-                    <View style={styles.badgeNota}>
-                      <Text style={styles.textoBadgeNota}>{barbeiro.nota}</Text>
-                    </View>
-
-                    <Pressable
-                      style={styles.badgeVideoFlutuante}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        setBarbeiroVideoModal(barbeiro);
-                      }}
-                    >
-                      <Text style={styles.textoBadgeVideo}>🎬 VER TRABALHO</Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={styles.corpoCardBarbeiro}>
-                    <Text style={styles.nomeBarbeiro} numberOfLines={1}>
-                      {barbeiro.nome}
-                    </Text>
-                    <Text style={styles.especialidadeBarbeiro} numberOfLines={1}>
-                      {barbeiro.especialidade}
-                    </Text>
-
-                    <View
-                      style={[
-                        styles.indicadorBarbeiro,
-                        isSelected && styles.indicadorBarbeiroAtivo,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.txtIndicadorBarbeiro,
-                          isSelected && styles.txtIndicadorBarbeiroAtivo,
-                        ]}
-                      >
-                        {isSelected ? 'SELECIONADO' : 'SELECIONAR'}
-                      </Text>
-                    </View>
-                  </View>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-
-        {/* ========================================== */}
-        {/* 4. BANNER LOJA DE PRODUTOS AUTORAIS        */}
-        {/* ========================================== */}
-        <View style={styles.cardVitrineProdutos}>
-          <View style={styles.infoVitrine}>
-            <Text style={styles.tagVitrine}>LINHA AUTORAL</Text>
-            <Text style={styles.tituloVitrine}>Loja de Cuidados</Text>
-            <Text style={styles.subtituloVitrine}>
-              Produtos orgânicos e pomadas exclusivas para o dia a dia.
-            </Text>
-          </View>
-          <Pressable
-            style={styles.btnAcessarLoja}
-            onPress={() => router.push('/produtos')}
-          >
-            <Text style={styles.txtBtnAcessarLoja}>VER PRODUTOS →</Text>
-          </Pressable>
-        </View>
-
-        {/* ========================================== */}
-        {/* 5. CARROSSEL HORIZONTAL DE SERVIÇOS        */}
-        {/* ========================================== */}
-        <View style={styles.secao}>
-          <View style={styles.headerSecao}>
-            <Text style={styles.tituloSecao}>Serviços Disponíveis</Text>
-            <Text style={styles.subtituloSecao}>Deslize para o lado e selecione a opção</Text>
-          </View>
-
-          {/* Abas de Categorias */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.containerFiltros}
-          >
-            {CATEGORIAS.map((cat) => {
-              const isSelected = categoriaSelecionada === cat;
-              return (
-                <Pressable
-                  key={cat}
-                  style={[
-                    styles.chipCategoria,
-                    isSelected && styles.chipCategoriaAtivo,
-                  ]}
-                  onPress={() => setCategoriaSelecionada(cat)}
-                >
-                  <Text
-                    style={[
-                      styles.textoChip,
-                      isSelected && styles.textoChipAtivo,
-                    ]}
-                  >
-                    {cat}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-
-          {/* Carrossel de Cards de Serviços */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.carrosselServicos}
-          >
-            {servicosFiltrados.map((servico) => {
-              const isSelected = servicoSelecionado === servico.id;
-              return (
-                <Pressable
-                  key={servico.id}
-                  style={[
-                    styles.cardServicoHorizontal,
-                    isSelected && styles.cardServicoHorizontalSelecionado,
-                  ]}
-                  onPress={() => setServicoSelecionado(servico.id)}
-                >
-                  <View style={styles.containerImagemServicoHorizontal}>
-                    <Image source={servico.imagem} style={styles.imagemServicoHorizontal} />
-                    <View style={styles.pillDuracaoFlutuante}>
-                      <Text style={styles.txtPillDuracaoFlutuante}>⏱ {servico.duracao}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.corpoServicoHorizontal}>
-                    <Text
-                      style={[
-                        styles.nomeServicoHorizontal,
-                        isSelected && styles.nomeServicoHorizontalSelecionado,
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {servico.nome}
-                    </Text>
-
-                    <Text style={styles.subtituloServicoHorizontal} numberOfLines={2}>
-                      {servico.subtitulo}
-                    </Text>
-
-                    <View style={styles.rodapeServicoHorizontal}>
-                      <Text
-                        style={[
-                          styles.precoServicoHorizontal,
-                          isSelected && styles.precoServicoHorizontalSelecionado,
-                        ]}
-                      >
-                        {servico.preco}
-                      </Text>
-
-                      <View
-                        style={[
-                          styles.btnAcaoServicoHorizontal,
-                          isSelected && styles.btnAcaoServicoHorizontalAtivo,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.txtBtnAcaoServicoHorizontal,
-                            isSelected && styles.txtBtnAcaoServicoHorizontalAtivo,
-                          ]}
-                        >
-                          {isSelected ? 'SELECIONADO ✓' : 'ESCOLHER'}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      </ScrollView>
-
-      {/* ========================================== */}
-      {/* MODAL DE VÍDEO DO BARBEIRO                 */}
-      {/* ========================================== */}
-      <Modal
-        visible={barbeiroVideoModal !== null}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setBarbeiroVideoModal(null)}
-      >
-        {barbeiroVideoModal && (
-          <View style={styles.modalBackground}>
-            <View style={styles.modalContainer}>
-              <Pressable
-                style={styles.botaoFecharModal}
-                onPress={() => setBarbeiroVideoModal(null)}
-              >
-                <Text style={styles.textoFecharModal}>✕ FECHAR</Text>
-              </Pressable>
-
-              <Video
-                source={barbeiroVideoModal.videoSource}
-                style={styles.videoPreview}
-                resizeMode={ResizeMode.COVER}
-                isLooping
-                shouldPlay
-                isMuted={true}
-              />
-
-              <View style={styles.modalInfoBarbeiro}>
-                <Text style={styles.nomeBarbeiroModal}>
-                  {barbeiroVideoModal.nome}
-                </Text>
-                <Text style={styles.especialidadeModal}>
-                  {barbeiroVideoModal.especialidade}
-                </Text>
-
-                <Pressable
-                  style={styles.botaoAgendarModal}
-                  onPress={() => {
-                    setBarbeiroSelecionado(barbeiroVideoModal.id);
-                    setBarbeiroVideoModal(null);
-                  }}
-                >
-                  <Text style={styles.textoAgendarModal}>
-                    CONFIRMAR PROFISSIONAL
-                  </Text>
-                </Pressable>
+              <View style={styles.botoesBanner}>
+                <Botao
+                  titulo="Explorar Loja"
+                  destaque
+                  onPress={() => router.push('/produtos')}
+                />
+                <Botao
+                  titulo="Agendar horário"
+                  onPress={() => router.push('/agenda')}
+                />
               </View>
             </View>
           </View>
-        )}
-      </Modal>
+        </ImageBackground>
 
-      {/* ========================================== */}
-      {/* 6. BARRA DE AÇÃO FIXA (CTA)                 */}
-      {/* ========================================== */}
-      <View style={styles.containerCTAFlutuante}>
-        <View style={styles.resumoCTA}>
-          <Text style={styles.txtResumoTop}>SERVIÇO SELECIONADO</Text>
-          <Text style={styles.txtResumoItens} numberOfLines={1}>
-            {servicoAtual ? servicoAtual.nome : 'Selecione um serviço'}
-          </Text>
+        {/* ==========================================
+            3. NOSSOS DESTAQUES
+        ========================================== */}
+        <View style={styles.secaoDestaques}>
+          <View style={styles.destaquesInner}>
+            <Text style={styles.tituloSecao}>Nossos Destaques</Text>
+
+            <Text style={styles.subtituloSecao}>
+              Atendimento de alto padrão, ambiente sofisticado e produtos de
+              primeira linha para o homem moderno.
+            </Text>
+
+            <View
+              style={[
+                styles.listaCards,
+                telaGrande ? styles.listaCardsGrande : styles.listaCardsMobile,
+              ]}
+            >
+              <CardDestaque
+                imagem={require('../../assets/images/homepage/loja.png')}
+                titulo="Loja Autoral"
+                descricao="Produtos exclusivos da marca Golden Barber: pomadas modeladoras, óleos hidratantes para barba e shampoos especiais."
+                destaque
+                telaGrande={telaGrande}
+                onPress={() => router.push('/produtos')}
+              />
+
+              <CardDestaque
+                imagem={require('../../assets/images/homepage/agendamento.png')}
+                titulo="Agendamento"
+                descricao="Escolha o serviço desejado, seu barbeiro de preferência, a data e o melhor horário disponível para você."
+                telaGrande={telaGrande}
+                onPress={() => router.push('/agenda')}
+              />
+
+              <CardDestaque
+                imagem={require('../../assets/images/homepage/trabalhos.png')}
+                titulo="Trabalhos"
+                descricao="Confira a galeria de trabalhos realizados por nossa equipe de especialistas e inspire-se para seu próximo visual."
+                telaGrande={telaGrande}
+                onPress={() => router.push('/trabalhos')} // <-- redireciona para a nova tela
+              />
+            </View>
+          </View>
         </View>
 
-        <Pressable
-          style={styles.btnCTA}
-          onPress={() => router.push('/agenda')}
-        >
-          <Text style={styles.txtBtnCTA}>
-            AVANÇAR • R$ {valorTotalCalculado},00
-          </Text>
-        </Pressable>
-      </View>
+        {/* ==========================================
+            4. AVALIAÇÕES (ANTES DO RODAPÉ)
+        ========================================== */}
+        <View style={styles.secaoAvaliacoes}>
+          <View style={styles.avaliacoesInner}>
+            <Text style={styles.tituloSecao}>O que dizem nossos clientes</Text>
 
-      {/* NAVEGAÇÃO INFERIOR */}
-      <View style={styles.bottomNav}>
-        <Pressable style={styles.navItem}>
-          <Text style={styles.navIconeAtivo}>✂️</Text>
-          <Text style={styles.navTextoAtivo}>Serviços</Text>
-        </Pressable>
-        <Pressable
-          style={styles.navItem}
-          onPress={() => router.push('/produtos')}
-        >
-          <Text style={styles.navIcone}>🛍️</Text>
-          <Text style={styles.navTexto}>Produtos</Text>
-        </Pressable>
-        <Pressable
-          style={styles.navItem}
-          onPress={() => router.push('/agenda')}
-        >
-          <Text style={styles.navIcone}>📅</Text>
-          <Text style={styles.navTexto}>Agenda</Text>
-        </Pressable>
-        <Pressable
-          style={styles.navItem}
-          onPress={() => router.push('/perfil')}
-        >
-          <Text style={styles.navIcone}>👤</Text>
-          <Text style={styles.navTexto}>Perfil</Text>
-        </Pressable>
-      </View>
+            <Text style={styles.subtituloAvaliacao}>
+              A experiência Golden Barber na opinião de quem já passou por aqui.
+            </Text>
+
+            <View
+              style={[
+                styles.listaAvaliacoes,
+                telaGrande ? styles.listaAvaliacoesGrande : styles.listaAvaliacoesMobile,
+              ]}
+            >
+              <View
+                style={[
+                  styles.cardAvaliacao,
+                  telaGrande ? styles.cardAvaliacaoGrande : styles.cardAvaliacaoMobile,
+                ]}
+              >
+                <Text style={styles.estrelas}>★★★★★</Text>
+                <Text style={styles.textoAvaliacao}>
+                  "Atendimento excelente, ambiente sofisticado e corte impecável!"
+                </Text>
+                <Text style={styles.nomeCliente}>Cliente Golden Barber</Text>
+              </View>
+
+              <View
+                style={[
+                  styles.cardAvaliacao,
+                  telaGrande ? styles.cardAvaliacaoGrande : styles.cardAvaliacaoMobile,
+                ]}
+              >
+                <Text style={styles.estrelas}>★★★★★</Text>
+                <Text style={styles.textoAvaliacao}>
+                  "Profissionais atenciosos e muito cuidadosos com cada detalhe."
+                </Text>
+                <Text style={styles.nomeCliente}>Cliente Golden Barber</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* ==========================================
+            5. RODAPÉ PRINCIPAL
+        ========================================== */}
+        <View style={styles.rodape}>
+          <View style={styles.rodapeInner}>
+            <View
+              style={[
+                styles.conteudoRodape,
+                telaGrande && styles.conteudoRodapeGrande,
+              ]}
+            >
+              <Image
+                source={require('../../assets/images/homepage/logo.png')}
+                style={styles.logoRodape}
+                resizeMode="contain"
+              />
+
+              <View style={styles.colunaCentral}>
+                <Text style={styles.nomeRodape}>Golden Barber</Text>
+                <Botao
+                  titulo="Explorar Loja"
+                  destaque
+                  onPress={() => router.push('/produtos')}
+                />
+              </View>
+
+              <View style={styles.colunaEndereco}>
+                <Text style={styles.tituloEndereco}>Horário & Local</Text>
+                <Text style={styles.textoEndereco}>
+                  Segunda a Sábado: 09h às 20h
+                </Text>
+                <Text style={styles.textoEndereco}>
+                  Av. Principal, 1000 - Centro
+                </Text>
+                <Text style={styles.textoEndereco}>Sorocaba - SP</Text>
+              </View>
+            </View>
+
+            <View style={styles.linhaDourada} />
+
+            <View style={styles.informacoesFinais}>
+              <Text style={styles.textoFinal}>© 2026 Golden Barber</Text>
+
+              <TouchableOpacity onPress={abrirInstagram}>
+                <Text style={styles.textoFinal}>Instagram</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={abrirWhatsApp}>
+                <Text style={styles.textoFinal}>WhatsApp</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-// ----------------------------------------------------------------------
-// ESTILOS COM CARROSSEL HORIZONTAL DE SERVIÇOS
-// ----------------------------------------------------------------------
+// =====================================================
+// ESTILOS
+// =====================================================
+
 const styles = StyleSheet.create({
-  container: {
+  tela: {
     flex: 1,
-    backgroundColor: '#1A1D24',
+    backgroundColor: CORES.fundo,
   },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 28,
+  scroll: {
+    flex: 1,
   },
 
-  // Header
-  topHeader: {
+  // CABEÇALHO
+  cabecalhoWrapper: {
+    width: '100%',
+    backgroundColor: CORES.fundo,
+    alignItems: 'center',
+  },
+  cabecalho: {
+    width: '100%',
+    maxWidth: 1200,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    alignItems: 'center',
+    gap: 16,
+  },
+  cabecalhoGrande: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 22,
-    marginTop: 6,
+    paddingHorizontal: 40,
   },
-  containerLogo: {
+  logo: {
+    width: 90,
+    height: 75,
+  },
+  menu: {
     flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoSimboloImage: {
-    width: 38,
-    height: 38,
-    marginRight: 10,
-  },
-  textoBrandContainer: {
+    flexWrap: 'wrap',
     justifyContent: 'center',
-  },
-  textoLogoPequeno: {
-    color: '#8FBCBB',
-    fontSize: 8.5,
-    fontWeight: '700',
-    letterSpacing: 2,
-    marginBottom: -1,
-  },
-  textoLogoGrande: {
-    color: '#ECEFF4',
-    fontSize: 16,
-    fontWeight: '800',
-    letterSpacing: 1.2,
-  },
-  badgeStatus: {
-    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#222732',
-    paddingHorizontal: 10,
+    gap: 20,
+  },
+  itemMenu: {
     paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#2E3646',
   },
-  pontoVerde: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#A3BE8C',
-    marginRight: 6,
-  },
-  textoStatus: {
-    fontSize: 9,
-    color: '#A3BE8C',
-    fontWeight: 'bold',
-    letterSpacing: 0.8,
+  textoMenu: {
+    color: '#E8E5DF',
+    fontSize: 14,
+    fontWeight: '500',
   },
 
-  // Hero Banner
-  heroBanner: {
-    backgroundColor: '#222732',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#2E3646',
-    marginBottom: 24,
+  // BANNER
+  banner: {
+    width: '100%',
+    height: 520,
+    justifyContent: 'center',
+    backgroundColor: CORES.marrom,
   },
-  heroTag: {
-    color: '#8FBCBB',
-    fontSize: 9,
+  imagemBanner: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.85,
+  },
+  sombraBanner: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+  },
+  bannerConteudoWrapper: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  bannerConteudo: {
+    width: '100%',
+    maxWidth: 1200,
+    paddingHorizontal: 30,
+    paddingVertical: 60,
+    alignItems: 'flex-start',
+  },
+  tituloBanner: {
+    color: '#F8F2E9',
+    fontSize: 38,
+    lineHeight: 44,
     fontWeight: 'bold',
-    letterSpacing: 2,
-    marginBottom: 6,
+    marginBottom: 16,
+    maxWidth: 480,
+    fontFamily: 'serif',
   },
-  heroTitulo: {
-    color: '#ECEFF4',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 6,
+  textoBanner: {
+    color: '#F0E9DF',
+    fontSize: 15,
+    lineHeight: 22,
+    maxWidth: 400,
+    marginBottom: 26,
   },
-  heroSubtitulo: {
-    color: '#98A2B3',
-    fontSize: 12,
-    lineHeight: 17,
+  botoesBanner: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 14,
   },
 
-  // Seções
-  secao: {
-    marginBottom: 28,
+  // BOTÕES
+  botao: {
+    minWidth: 160,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
   },
-  headerSecao: {
-    marginBottom: 14,
+  botaoDestaque: {
+    backgroundColor: CORES.dourado,
+    borderWidth: 1,
+    borderColor: CORES.dourado,
   },
-  tituloSecao: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ECEFF4',
+  botaoContorno: {
+    backgroundColor: 'rgba(16,20,20,0.85)',
+    borderWidth: 1,
+    borderColor: CORES.dourado,
+  },
+  textoBotao: {
+    fontSize: 13,
     letterSpacing: 0.3,
   },
-  subtituloSecao: {
-    fontSize: 11.5,
-    color: '#98A2B3',
-    marginTop: 2,
+  textoBotaoDestaque: {
+    color: '#171510',
+    fontWeight: '600',
+  },
+  textoBotaoContorno: {
+    color: CORES.texto,
   },
 
-  // Carrossel Barbeiros
-  carrosselBarbeiros: {
-    paddingRight: 16,
+  // DESTAQUES
+  secaoDestaques: {
+    width: '100%',
+    backgroundColor: CORES.marrom,
+    paddingVertical: 55,
+    alignItems: 'center',
   },
-  cardBarbeiro: {
-    width: 155,
-    backgroundColor: '#222732',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#2E3646',
+  destaquesInner: {
+    width: '100%',
+    maxWidth: 1200,
+    paddingHorizontal: 24,
+  },
+  tituloSecao: {
+    color: CORES.texto,
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontFamily: 'serif',
+    marginBottom: 12,
+  },
+  subtituloSecao: {
+    color: CORES.cinza,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+    alignSelf: 'center',
+    maxWidth: 450,
+    marginBottom: 36,
+  },
+  listaCards: {
+    width: '100%',
+    gap: 20,
+  },
+  listaCardsMobile: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  listaCardsGrande: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'stretch',
+  },
+  card: {
+    backgroundColor: CORES.card,
+    borderRadius: 4,
     overflow: 'hidden',
-    marginRight: 12,
   },
-  cardBarbeiroSelecionado: {
-    borderColor: '#8FBCBB',
-    backgroundColor: '#29303D',
-  },
-  containerFotoBarbeiro: {
+  cardMobile: {
     width: '100%',
-    height: 145,
-    backgroundColor: '#1A1D24',
-    position: 'relative',
+    maxWidth: 360,
   },
-  fotoBarbeiro: {
+  cardGrande: {
+    flex: 1,
+    maxWidth: 360,
+  },
+  cardDestaque: {
+    backgroundColor: CORES.dourado,
+  },
+  imagemCard: {
     width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    height: 180,
+    backgroundColor: '#39332B',
   },
-  badgeNota: {
-    position: 'absolute',
-    top: 6,
-    right: 6,
-    backgroundColor: 'rgba(26, 29, 36, 0.88)',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
+  conteudoCard: {
+    padding: 18,
+    minHeight: 120,
   },
-  textoBadgeNota: {
-    color: '#E5C07B',
-    fontSize: 10,
-    fontWeight: 'bold',
+  tituloCard: {
+    color: CORES.texto,
+    fontSize: 20,
+    fontFamily: 'serif',
+    fontWeight: '600',
+    marginBottom: 8,
   },
-  badgeVideoFlutuante: {
-    position: 'absolute',
-    bottom: 6,
-    left: 6,
-    backgroundColor: 'rgba(26, 29, 36, 0.88)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 0.5,
-    borderColor: '#8FBCBB',
+  textoEscuro: {
+    color: '#171510',
   },
-  textoBadgeVideo: {
-    color: '#8FBCBB',
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
+  descricaoCard: {
+    color: CORES.cinza,
+    fontSize: 13,
+    lineHeight: 18,
   },
-  corpoCardBarbeiro: {
-    padding: 10,
+  descricaoDestaque: {
+    color: '#302719',
   },
-  nomeBarbeiro: {
-    fontSize: 13.5,
-    fontWeight: 'bold',
-    color: '#ECEFF4',
+
+  // AVALIAÇÕES
+  secaoAvaliacoes: {
+    width: '100%',
+    backgroundColor: CORES.avaliacoesFundo,
+    paddingVertical: 50,
+    alignItems: 'center',
   },
-  especialidadeBarbeiro: {
-    fontSize: 10.5,
-    color: '#98A2B3',
-    marginTop: 2,
+  avaliacoesInner: {
+    width: '100%',
+    maxWidth: 1200,
+    paddingHorizontal: 22,
+  },
+  subtituloAvaliacao: {
+    color: '#AAA69D',
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 30,
+  },
+  listaAvaliacoes: {
+    width: '100%',
+    gap: 16,
+  },
+  listaAvaliacoesMobile: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  listaAvaliacoesGrande: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  cardAvaliacao: {
+    backgroundColor: CORES.cardAvaliacao,
+    borderWidth: 1,
+    borderColor: '#3A3D36',
+    borderRadius: 4,
+    padding: 22,
+  },
+  cardAvaliacaoMobile: {
+    width: '100%',
+    maxWidth: 540,
+  },
+  cardAvaliacaoGrande: {
+    flex: 1,
+    maxWidth: 540,
+  },
+  estrelas: {
+    color: CORES.dourado,
+    fontSize: 18,
+    letterSpacing: 3,
     marginBottom: 10,
   },
-  indicadorBarbeiro: {
-    width: '100%',
-    paddingVertical: 7,
-    borderRadius: 8,
-    backgroundColor: '#1A1D24',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#2E3646',
+  textoAvaliacao: {
+    color: '#F0ECE4',
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: 14,
   },
-  indicadorBarbeiroAtivo: {
-    backgroundColor: '#8FBCBB',
-    borderColor: '#8FBCBB',
-  },
-  txtIndicadorBarbeiro: {
-    color: '#98A2B3',
-    fontSize: 9.5,
-    fontWeight: 'bold',
-    letterSpacing: 0.8,
-  },
-  txtIndicadorBarbeiroAtivo: {
-    color: '#1A1D24',
-  },
-
-  // Banner Produtos
-  cardVitrineProdutos: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#222732',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 28,
-    borderWidth: 1,
-    borderColor: '#2E3646',
-  },
-  infoVitrine: {
-    flex: 1,
-    marginRight: 10,
-  },
-  tagVitrine: {
-    color: '#E5C07B',
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    letterSpacing: 1.5,
-  },
-  tituloVitrine: {
-    color: '#ECEFF4',
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginTop: 2,
-  },
-  subtituloVitrine: {
-    color: '#98A2B3',
-    fontSize: 11,
-    marginTop: 2,
-  },
-  btnAcessarLoja: {
-    backgroundColor: '#1A1D24',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E5C07B',
-  },
-  txtBtnAcessarLoja: {
-    color: '#E5C07B',
-    fontSize: 9.5,
-    fontWeight: 'bold',
-    letterSpacing: 0.8,
-  },
-
-  // Filtros
-  containerFiltros: {
-    marginBottom: 16,
-    paddingRight: 16,
-  },
-  chipCategoria: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#222732',
-    borderWidth: 1,
-    borderColor: '#2E3646',
-    marginRight: 8,
-  },
-  chipCategoriaAtivo: {
-    backgroundColor: '#8FBCBB',
-    borderColor: '#8FBCBB',
-  },
-  textoChip: {
+  nomeCliente: {
+    color: CORES.dourado,
     fontSize: 12,
-    fontWeight: '500',
-    color: '#98A2B3',
-  },
-  textoChipAtivo: {
-    color: '#1A1D24',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
 
-  // CARROSSEL HORIZONTAL DE SERVIÇOS
-  carrosselServicos: {
-    paddingRight: 16,
-  },
-  cardServicoHorizontal: {
-    width: 240,
-    backgroundColor: '#222732',
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: '#2E3646',
-    marginRight: 14,
-    overflow: 'hidden',
-  },
-  cardServicoHorizontalSelecionado: {
-    borderColor: '#8FBCBB',
-    backgroundColor: '#28303C',
-  },
-  containerImagemServicoHorizontal: {
+  // RODAPÉ
+  rodape: {
     width: '100%',
-    height: 120,
-    backgroundColor: '#1A1D24',
-    position: 'relative',
+    backgroundColor: CORES.fundo,
+    paddingVertical: 45,
+    alignItems: 'center',
   },
-  imagemServicoHorizontal: {
+  rodapeInner: {
     width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    maxWidth: 1200,
+    paddingHorizontal: 25,
   },
-  pillDuracaoFlutuante: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: 'rgba(26, 29, 36, 0.88)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#2E3646',
+  conteudoRodape: {
+    alignItems: 'center',
+    gap: 28,
   },
-  txtPillDuracaoFlutuante: {
-    color: '#98A2B3',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  corpoServicoHorizontal: {
-    padding: 12,
-  },
-  nomeServicoHorizontal: {
-    fontSize: 14.5,
-    fontWeight: 'bold',
-    color: '#ECEFF4',
-  },
-  nomeServicoHorizontalSelecionado: {
-    color: '#8FBCBB',
-  },
-  subtituloServicoHorizontal: {
-    fontSize: 11,
-    color: '#98A2B3',
-    marginTop: 4,
-    lineHeight: 15,
-    height: 30,
-  },
-  rodapeServicoHorizontal: {
+  conteudoRodapeGrande: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 12,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#2E3646',
   },
-  precoServicoHorizontal: {
+  logoRodape: {
+    width: 120,
+    height: 120,
+  },
+  colunaCentral: {
+    alignItems: 'center',
+    gap: 16,
+  },
+  nomeRodape: {
+    color: CORES.dourado,
+    fontSize: 28,
+    fontFamily: 'serif',
+    fontWeight: 'bold',
+  },
+  colunaEndereco: {
+    alignItems: 'center',
+  },
+  tituloEndereco: {
+    color: CORES.texto,
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#ECEFF4',
+    marginBottom: 8,
   },
-  precoServicoHorizontalSelecionado: {
-    color: '#E5C07B',
+  textoEndereco: {
+    color: '#D5D4CF',
+    fontSize: 13,
+    lineHeight: 20,
+    textAlign: 'center',
   },
-  btnAcaoServicoHorizontal: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#1A1D24',
-    borderWidth: 1,
-    borderColor: '#2E3646',
+  linhaDourada: {
+    height: 1,
+    backgroundColor: CORES.dourado,
+    marginTop: 32,
+    marginBottom: 20,
+    opacity: 0.6,
   },
-  btnAcaoServicoHorizontalAtivo: {
-    backgroundColor: '#8FBCBB',
-    borderColor: '#8FBCBB',
-  },
-  txtBtnAcaoServicoHorizontal: {
-    color: '#98A2B3',
-    fontSize: 9.5,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-  txtBtnAcaoServicoHorizontalAtivo: {
-    color: '#1A1D24',
-  },
-
-  // Modal
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(26, 29, 36, 0.92)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalContainer: {
-    width: '100%',
-    height: '75%',
-    backgroundColor: '#222732',
-    borderRadius: 16,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#8FBCBB',
-  },
-  botaoFecharModal: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    zIndex: 10,
-    backgroundColor: 'rgba(26, 29, 36, 0.85)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  textoFecharModal: {
-    color: '#ECEFF4',
-    fontSize: 10,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-  },
-  videoPreview: {
-    width: '100%',
-    height: '70%',
-  },
-  modalInfoBarbeiro: {
-    padding: 16,
-    backgroundColor: '#222732',
-    alignItems: 'center',
-  },
-  nomeBarbeiroModal: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ECEFF4',
-  },
-  especialidadeModal: {
-    fontSize: 12,
-    color: '#98A2B3',
-    marginBottom: 12,
-  },
-  botaoAgendarModal: {
-    backgroundColor: '#8FBCBB',
-    width: '100%',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  textoAgendarModal: {
-    color: '#1A1D24',
-    fontWeight: 'bold',
-    fontSize: 12,
-    letterSpacing: 1,
-  },
-
-  // Barra Flutuante CTA
-  containerCTAFlutuante: {
+  informacoesFinais: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#222732',
-    borderTopWidth: 1,
-    borderTopColor: '#2E3646',
   },
-  resumoCTA: {
-    flex: 1,
-    marginRight: 10,
-  },
-  txtResumoTop: {
-    color: '#98A2B3',
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-  },
-  txtResumoItens: {
-    color: '#ECEFF4',
+  textoFinal: {
+    color: '#77766F',
     fontSize: 12,
-    fontWeight: 'bold',
-    marginTop: 1,
-  },
-  btnCTA: {
-    backgroundColor: '#8FBCBB',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  txtBtnCTA: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#1A1D24',
-    letterSpacing: 0.8,
-  },
-
-  // Bottom Navigation
-  bottomNav: {
-    flexDirection: 'row',
-    height: 58,
-    backgroundColor: '#1A1D24',
-    borderTopWidth: 1,
-    borderTopColor: '#2E3646',
-    alignItems: 'center',
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIcone: {
-    fontSize: 16,
-    opacity: 0.4,
-  },
-  navIconeAtivo: {
-    fontSize: 16,
-  },
-  navTexto: {
-    fontSize: 9.5,
-    color: '#98A2B3',
-    marginTop: 2,
-  },
-  navTextoAtivo: {
-    fontSize: 9.5,
-    fontWeight: 'bold',
-    color: '#8FBCBB',
-    marginTop: 2,
   },
 });
