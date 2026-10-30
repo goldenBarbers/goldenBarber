@@ -129,7 +129,7 @@ export default function Index() {
     'Início': () => { },
     'Loja': () => router.push('/produtos'),
     'Agendar': () => router.push('/agenda'),
-    'Trabalhos': () => router.push('/trabalhos'), // <-- adicione esta linha
+    'Trabalhos': () => router.push('/trabalhos'),
     'Minha Conta': () => router.push('/perfil'),
     'Login': () => router.push('/login'),
   };
@@ -164,8 +164,7 @@ export default function Index() {
                 >
                   <Text style={styles.textoMenu}>{item}</Text>
                 </TouchableOpacity>
-              ),
-              )}
+              ))}
             </View>
           </View>
         </View>
@@ -247,14 +246,14 @@ export default function Index() {
                 titulo="Trabalhos"
                 descricao="Confira a galeria de trabalhos realizados por nossa equipe de especialistas e inspire-se para seu próximo visual."
                 telaGrande={telaGrande}
-                onPress={() => router.push('/trabalhos')} // <-- redireciona para a nova tela
+                onPress={() => router.push('/trabalhos')}
               />
             </View>
           </View>
         </View>
 
         {/* ==========================================
-            4. AVALIAÇÕES (ANTES DO RODAPÉ)
+            4. AVALIAÇÕES
         ========================================== */}
         <View style={styles.secaoAvaliacoes}>
           <View style={styles.avaliacoesInner}>
@@ -300,7 +299,62 @@ export default function Index() {
         </View>
 
         {/* ==========================================
-            5. RODAPÉ PRINCIPAL
+            5. LOCALIZAÇÃO / GOOGLE MAPS (CORES ORIGINAIS)
+        ========================================== */}
+        <View style={styles.secaoMapa}>
+          <View style={styles.mapaInner}>
+            <Text style={styles.taglineSecao}>COMO CHEGAR</Text>
+            <Text style={styles.tituloSecao}>Venha nos Visitar</Text>
+            <Text style={styles.subtituloSecao}>
+              Fácil acesso em Sorocaba/SP com estacionamento na região.
+            </Text>
+
+            <View
+              style={[
+                styles.gridVisita,
+                telaGrande ? styles.gridVisitaGrande : styles.gridVisitaMobile,
+              ]}
+            >
+              {/* CARD DE INFORMAÇÕES (SEM ÍCONES) */}
+              <View style={styles.cardInfoVisita}>
+                <View style={styles.blocoInfo}>
+                  <Text style={styles.tituloInfo}>Endereço</Text>
+                  <Text style={styles.textoInfoDestaque}>Av. Principal, 1000</Text>
+                  <Text style={styles.textoInfoSub}>Centro - Sorocaba - SP</Text>
+                  <Text style={styles.textoInfoSub}>CEP 18000-000</Text>
+                </View>
+
+                <View style={styles.divisorInfo} />
+
+                <View style={styles.blocoInfo}>
+                  <Text style={styles.tituloInfo}>Horários</Text>
+                  <Text style={styles.textoInfoDestaque}>Segunda a Sábado</Text>
+                  <Text style={styles.textoInfoSub}>09h00 às 20h00</Text>
+                  <Text style={styles.textoInfoSub}>Domingos e Feriados: Fechado</Text>
+                </View>
+              </View>
+
+              {/* CONTAINER DO MAPA (CORES ORIGINAIS) */}
+              <View style={styles.containerIframe}>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d470092.74092344457!2d-46.11397563437496!3d-23.00174899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ccf9b788bd1917%3A0xa5b0bda363f85468!2sGolden%20Barber%20Shop!5e0!3m2!1spt-BR!2sbr!4v1793359175236!5m2!1spt-BR!2sbr"
+                  width="100%"
+                  height="100%"
+                  style={{
+                    border: 0,
+                    minHeight: '380px',
+                  }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* ==========================================
+            6. RODAPÉ PRINCIPAL
         ========================================== */}
         <View style={styles.rodape}>
           <View style={styles.rodapeInner}>
@@ -641,6 +695,85 @@ const styles = StyleSheet.create({
     color: CORES.dourado,
     fontSize: 12,
     fontWeight: '600',
+  },
+
+  // LOCALIZAÇÃO / MAPA
+  secaoMapa: {
+    width: '100%',
+    backgroundColor: CORES.marrom,
+    paddingVertical: 55,
+    alignItems: 'center',
+  },
+  mapaInner: {
+    width: '100%',
+    maxWidth: 1050,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  taglineSecao: {
+    color: CORES.dourado,
+    fontSize: 12,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  gridVisita: {
+    width: '100%',
+    marginTop: 24,
+    gap: 20,
+  },
+  gridVisitaMobile: {
+    flexDirection: 'column',
+  },
+  gridVisitaGrande: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  cardInfoVisita: {
+    flex: 1,
+    backgroundColor: CORES.card,
+    borderRadius: 8,
+    padding: 32,
+    borderWidth: 1,
+    borderColor: '#3A3D36',
+    justifyContent: 'center',
+  },
+  blocoInfo: {
+    gap: 6,
+  },
+  tituloInfo: {
+    color: CORES.dourado,
+    fontSize: 22,
+    fontWeight: 'bold',
+    fontFamily: 'serif',
+    marginBottom: 8,
+  },
+  textoInfoDestaque: {
+    color: CORES.texto,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  textoInfoSub: {
+    color: CORES.cinza,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  divisorInfo: {
+    height: 1,
+    backgroundColor: '#3A3D36',
+    width: '100%',
+    marginVertical: 24,
+    opacity: 0.8,
+  },
+  containerIframe: {
+    flex: 1.4,
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#3A3D36',
+    minHeight: 380,
   },
 
   // RODAPÉ

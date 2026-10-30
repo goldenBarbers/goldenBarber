@@ -252,7 +252,7 @@ export default function Agenda() {
               
               {/* COLUNA 1: SERVIÇOS */}
               <View style={styles.coluna}>
-                <Text style={styles.colunaTitulo}>✂️ Escolha o serviço</Text>
+                <Text style={styles.colunaTitulo}>Escolha o serviço</Text>
                 <View style={styles.listaOpcoes}>
                   {SERVICOS.map((servico) => {
                     const ativo = servicoSel.id === servico.id;
@@ -282,7 +282,7 @@ export default function Agenda() {
 
               {/* COLUNA 2: BARBEIROS */}
               <View style={styles.coluna}>
-                <Text style={styles.colunaTitulo}>👤 Escolha o barbeiro</Text>
+                <Text style={styles.colunaTitulo}>Escolha o barbeiro</Text>
                 <View style={styles.listaOpcoes}>
                   {BARBEIROS.map((barbeiro) => {
                     const ativo = barbeiroSel.id === barbeiro.id;
@@ -310,7 +310,7 @@ export default function Agenda() {
 
               {/* COLUNA 3: CALENDÁRIO E HORÁRIOS */}
               <View style={styles.coluna}>
-                <Text style={styles.colunaTitulo}>📅 Escolha a data</Text>
+                <Text style={styles.colunaTitulo}>Escolha a data</Text>
                 
                 {/* CALENDÁRIO COMPACTO */}
                 <View style={styles.calendarioBox}>
@@ -339,7 +339,7 @@ export default function Agenda() {
                 </View>
 
                 {/* GRID DE HORÁRIOS */}
-                <Text style={[styles.colunaTitulo, { marginTop: 16 }]}>⏰ Escolha o horário</Text>
+                <Text style={[styles.colunaTitulo, { marginTop: 16 }]}>Escolha o horário</Text>
                 <View style={styles.gridHorarios}>
                   {HORARIOS_DISPONIVEIS.map((horario) => {
                     const ativo = horarioSel === horario;
@@ -360,7 +360,7 @@ export default function Agenda() {
 
               {/* COLUNA 4: RESUMO DO AGENDAMENTO */}
               <View style={[styles.coluna, styles.colunaResumo]}>
-                <Text style={styles.colunaTitulo}>📋 Resumo do agendamento</Text>
+                <Text style={styles.colunaTitulo}>Resumo do agendamento</Text>
 
                 <View style={styles.resumoBox}>
                   <View style={styles.resumoLinha}>
@@ -406,7 +406,7 @@ export default function Agenda() {
                     <Text style={styles.btnConfirmarTexto}>CONFIRMAR AGENDAMENTO</Text>
                   </TouchableOpacity>
 
-                  <Text style={styles.segurancaTexto}>🔒 Seus dados estão seguros conosco.</Text>
+                  <Text style={styles.segurancaTexto}>Seus dados estão seguros conosco.</Text>
                 </View>
               </View>
 
