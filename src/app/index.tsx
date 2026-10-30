@@ -8,15 +8,16 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   useWindowDimensions,
 } from 'react-native';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
 // =====================================================
-// GOLDEN BARBER
+// GOLDEN BARBER - Homepage
 // Ficheiro: src/app/index.tsx
 // =====================================================
 
@@ -115,63 +116,15 @@ export default function Index() {
     setTelaGrande(width >= 768);
   }, [width]);
 
-  const whatsapp = '5511999999999';
-
-  const abrirWhatsApp = () => {
-    Linking.openURL(`https://wa.me/${whatsapp}`);
-  };
-
-  const abrirInstagram = () => {
-    Linking.openURL('https://www.instagram.com/');
-  };
-
-  const navegacaoMenu: Record<string, () => void> = {
-    'Início': () => { },
-    'Loja': () => router.push('/produtos'),
-    'Agendar': () => router.push('/agenda'),
-    'Trabalhos': () => router.push('/trabalhos'),
-    'Minha Conta': () => router.push('/perfil'),
-    'Login': () => router.push('/login'),
-  };
-
   return (
     <SafeAreaView style={styles.tela}>
       <StatusBar barStyle="light-content" />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* ==========================================
-            1. CABEÇALHO
-        ========================================== */}
-        <View style={styles.cabecalhoWrapper}>
-          <View
-            style={[
-              styles.cabecalho,
-              telaGrande && styles.cabecalhoGrande,
-            ]}
-          >
-            <Image
-              source={require('../../assets/images/homepage/logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+        {/* CABEÇALHO REUTILIZÁVEL */}
+        <Header />
 
-            <View style={styles.menu}>
-              {['Início', 'Loja', 'Agendar', 'Trabalhos', 'Minha Conta', 'Login'].map((item) => (
-                <TouchableOpacity
-                  key={item}
-                  style={styles.itemMenu}
-                  onPress={navegacaoMenu[item]}
-                >
-                  <Text style={styles.textoMenu}>{item}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </View>
-
-        {/* ==========================================
-            2. BANNER PRINCIPAL (HERO)
-        ========================================== */}
+        {/* BANNER PRINCIPAL (HERO) */}
         <ImageBackground
           source={require('../../assets/images/homepage/barbeiro-e-ambiente.jpg')}
           style={[styles.banner]}
@@ -206,9 +159,7 @@ export default function Index() {
           </View>
         </ImageBackground>
 
-        {/* ==========================================
-            3. NOSSOS DESTAQUES
-        ========================================== */}
+        {/* NOSSOS DESTAQUES */}
         <View style={styles.secaoDestaques}>
           <View style={styles.destaquesInner}>
             <Text style={styles.tituloSecao}>Nossos Destaques</Text>
@@ -252,9 +203,7 @@ export default function Index() {
           </View>
         </View>
 
-        {/* ==========================================
-            4. AVALIAÇÕES
-        ========================================== */}
+        {/* AVALIAÇÕES */}
         <View style={styles.secaoAvaliacoes}>
           <View style={styles.avaliacoesInner}>
             <Text style={styles.tituloSecao}>O que dizem nossos clientes</Text>
@@ -298,9 +247,7 @@ export default function Index() {
           </View>
         </View>
 
-        {/* ==========================================
-            5. LOCALIZAÇÃO / GOOGLE MAPS (CORES ORIGINAIS)
-        ========================================== */}
+        {/* LOCALIZAÇÃO / MAPA */}
         <View style={styles.secaoMapa}>
           <View style={styles.mapaInner}>
             <Text style={styles.taglineSecao}>COMO CHEGAR</Text>
@@ -315,7 +262,6 @@ export default function Index() {
                 telaGrande ? styles.gridVisitaGrande : styles.gridVisitaMobile,
               ]}
             >
-              {/* CARD DE INFORMAÇÕES (SEM ÍCONES) */}
               <View style={styles.cardInfoVisita}>
                 <View style={styles.blocoInfo}>
                   <Text style={styles.tituloInfo}>Endereço</Text>
@@ -334,7 +280,6 @@ export default function Index() {
                 </View>
               </View>
 
-              {/* CONTAINER DO MAPA (CORES ORIGINAIS) */}
               <View style={styles.containerIframe}>
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d470092.74092344457!2d-46.11397563437496!3d-23.00174899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ccf9b788bd1917%3A0xa5b0bda363f85468!2sGolden%20Barber%20Shop!5e0!3m2!1spt-BR!2sbr!4v1793359175236!5m2!1spt-BR!2sbr"
@@ -353,67 +298,12 @@ export default function Index() {
           </View>
         </View>
 
-        {/* ==========================================
-            6. RODAPÉ PRINCIPAL
-        ========================================== */}
-        <View style={styles.rodape}>
-          <View style={styles.rodapeInner}>
-            <View
-              style={[
-                styles.conteudoRodape,
-                telaGrande && styles.conteudoRodapeGrande,
-              ]}
-            >
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logoRodape}
-                resizeMode="contain"
-              />
-
-              <View style={styles.colunaCentral}>
-                <Text style={styles.nomeRodape}>Golden Barber</Text>
-                <Botao
-                  titulo="Explorar Loja"
-                  destaque
-                  onPress={() => router.push('/produtos')}
-                />
-              </View>
-
-              <View style={styles.colunaEndereco}>
-                <Text style={styles.tituloEndereco}>Horário & Local</Text>
-                <Text style={styles.textoEndereco}>
-                  Segunda a Sábado: 09h às 20h
-                </Text>
-                <Text style={styles.textoEndereco}>
-                  Av. Principal, 1000 - Centro
-                </Text>
-                <Text style={styles.textoEndereco}>Sorocaba - SP</Text>
-              </View>
-            </View>
-
-            <View style={styles.linhaDourada} />
-
-            <View style={styles.informacoesFinais}>
-              <Text style={styles.textoFinal}>© 2026 Golden Barber</Text>
-
-              <TouchableOpacity onPress={abrirInstagram}>
-                <Text style={styles.textoFinal}>Instagram</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={abrirWhatsApp}>
-                <Text style={styles.textoFinal}>WhatsApp</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        {/* RODAPÉ REUTILIZÁVEL */}
+        <Footer />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-// =====================================================
-// ESTILOS
-// =====================================================
 
 const styles = StyleSheet.create({
   tela: {
@@ -422,45 +312,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-  },
-
-  // CABEÇALHO
-  cabecalhoWrapper: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    alignItems: 'center',
-  },
-  cabecalho: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    alignItems: 'center',
-    gap: 16,
-  },
-  cabecalhoGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 40,
-  },
-  logo: {
-    width: 90,
-    height: 75,
-  },
-  menu: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
-  itemMenu: {
-    paddingVertical: 6,
-  },
-  textoMenu: {
-    color: '#E8E5DF',
-    fontSize: 14,
-    fontWeight: '500',
   },
 
   // BANNER
@@ -774,72 +625,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#3A3D36',
     minHeight: 380,
-  },
-
-  // RODAPÉ
-  rodape: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    paddingVertical: 45,
-    alignItems: 'center',
-  },
-  rodapeInner: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 25,
-  },
-  conteudoRodape: {
-    alignItems: 'center',
-    gap: 28,
-  },
-  conteudoRodapeGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoRodape: {
-    width: 120,
-    height: 120,
-  },
-  colunaCentral: {
-    alignItems: 'center',
-    gap: 16,
-  },
-  nomeRodape: {
-    color: CORES.dourado,
-    fontSize: 28,
-    fontFamily: 'serif',
-    fontWeight: 'bold',
-  },
-  colunaEndereco: {
-    alignItems: 'center',
-  },
-  tituloEndereco: {
-    color: CORES.texto,
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  textoEndereco: {
-    color: '#D5D4CF',
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  linhaDourada: {
-    height: 1,
-    backgroundColor: CORES.dourado,
-    marginTop: 32,
-    marginBottom: 20,
-    opacity: 0.6,
-  },
-  informacoesFinais: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textoFinal: {
-    color: '#77766F',
-    fontSize: 12,
   },
 });

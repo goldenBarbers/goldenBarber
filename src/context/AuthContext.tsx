@@ -28,23 +28,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Estado do Usuário Autenticado (Inicia sem usuário ou pronto para receber o formulário)
-  const [usuario, setUsuario] = useState<Usuario | null>({
-    nome: 'Lucas Silveira',
-    email: 'lucas.silveira@email.com',
-  });
+  // Inicia como null (visitante não logado)
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   // Estado do Agendamento Ativo
-  const [agendamento, setAgendamento] = useState<Agendamento | null>({
-    id: 'ag-102',
-    servico: 'Corte de Cabelo Minimalista',
-    barbeiro: 'Paulo Rogério',
-    data: 'Segunda-feira, 26/10',
-    horario: '14:00',
-    duracao: '40 min',
-    preco: 'R$ 65,00',
-    status: 'Confirmado',
-  });
+  const [agendamento, setAgendamento] = useState<Agendamento | null>(null);
 
   const login = (nome: string, email: string) => {
     setUsuario({ nome, email });
@@ -52,6 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUsuario(null);
+    setAgendamento(null);
   };
 
   const agendar = (novoAgendamento: Agendamento) => {

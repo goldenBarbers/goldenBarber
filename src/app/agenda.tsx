@@ -8,7 +8,6 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   Modal,
   useWindowDimensions,
 } from 'react-native';
@@ -16,6 +15,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 // =====================================================
 // GOLDEN BARBER - AGENDA EXCLUSIVA
@@ -74,7 +76,7 @@ const HORARIOS_DISPONIVEIS = [
   '17:00', '18:00', '19:00',
 ];
 
-// DIAS DO MÊS (EXEMPLO)
+// DIAS DO MÊS
 const DIAS_CALENDARIO = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export default function Agenda() {
@@ -95,16 +97,6 @@ export default function Agenda() {
     setTelaGrande(width >= 992);
   }, [width]);
 
-  const whatsapp = '5511999999999';
-
-  const abrirWhatsApp = () => {
-    Linking.openURL(`https://wa.me/${whatsapp}`);
-  };
-
-  const abrirInstagram = () => {
-    Linking.openURL('https://www.instagram.com/');
-  };
-
   const confirmarAgendamento = () => {
     if (auth && auth.agendar) {
       auth.agendar({
@@ -121,59 +113,15 @@ export default function Agenda() {
     setModalSucesso(true);
   };
 
-  const navegacaoMenu: Record<string, () => void> = {
-    'Início': () => router.push('/'),
-    'Loja': () => router.push('/produtos'),
-    'Agendar': () => {},
-    'Trabalhos': () => router.push('/trabalhos'),
-    'Minha Conta': () => router.push('/perfil'),
-    'Login': () => router.push('/login'),
-  };
-
   return (
     <SafeAreaView style={styles.tela}>
       <StatusBar barStyle="light-content" />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* ==========================================
-            1. CABEÇALHO PRINCIPAL
-        ========================================== */}
-        <View style={styles.cabecalhoWrapper}>
-          <View style={[styles.cabecalho, telaGrande && styles.cabecalhoGrande]}>
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
+        {/* CABEÇALHO REUTILIZÁVEL */}
+        <Header />
 
-            <View style={styles.menu}>
-              {['Início', 'Loja', 'Agendar', 'Trabalhos', 'Minha Conta', 'Login'].map(
-                (item) => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.itemMenu}
-                    onPress={navegacaoMenu[item]}
-                  >
-                    <Text
-                      style={[
-                        styles.textoMenu,
-                        item === 'Agendar' && styles.textoMenuAtivo,
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                ),
-              )}
-            </View>
-          </View>
-        </View>
-
-        {/* ==========================================
-            2. HERO / BANNER SUPERIOR
-        ========================================== */}
+        {/* HERO / BANNER SUPERIOR */}
         <ImageBackground
           source={require('../../assets/images/homepage/barbeiro-e-ambiente.jpg')}
           style={styles.heroBanner}
@@ -192,9 +140,7 @@ export default function Agenda() {
           </View>
         </ImageBackground>
 
-        {/* ==========================================
-            3. WIDGET PRINCIPAL DE AGENDAMENTO
-        ========================================== */}
+        {/* WIDGET PRINCIPAL DE AGENDAMENTO */}
         <View style={styles.secaoAgendamento}>
           <View style={styles.agendamentoCardPrincipal}>
             {/* TOPO DO WIDGET */}
@@ -215,7 +161,9 @@ export default function Agenda() {
             {/* ETAPAS */}
             <View style={styles.etapasBarra}>
               <View style={[styles.etapaItem, styles.etapaAtiva]}>
-                <View style={styles.etapaNumeroAtivo}><Text style={styles.etapaNumeroTextoAtivo}>1</Text></View>
+                <View style={styles.etapaNumeroAtivo}>
+                  <Text style={styles.etapaNumeroTextoAtivo}>1</Text>
+                </View>
                 <View style={styles.etapaTextos}>
                   <Text style={styles.etapaTituloAtivo}>Serviço</Text>
                   <Text style={styles.etapaSub}>Escolha o serviço</Text>
@@ -223,7 +171,9 @@ export default function Agenda() {
               </View>
 
               <View style={styles.etapaItem}>
-                <View style={styles.etapaNumero}><Text style={styles.etapaNumeroTexto}>2</Text></View>
+                <View style={styles.etapaNumero}>
+                  <Text style={styles.etapaNumeroTexto}>2</Text>
+                </View>
                 <View style={styles.etapaTextos}>
                   <Text style={styles.etapaTitulo}>Barbeiro</Text>
                   <Text style={styles.etapaSub}>Escolha o profissional</Text>
@@ -231,7 +181,9 @@ export default function Agenda() {
               </View>
 
               <View style={styles.etapaItem}>
-                <View style={styles.etapaNumero}><Text style={styles.etapaNumeroTexto}>3</Text></View>
+                <View style={styles.etapaNumero}>
+                  <Text style={styles.etapaNumeroTexto}>3</Text>
+                </View>
                 <View style={styles.etapaTextos}>
                   <Text style={styles.etapaTitulo}>Data e hora</Text>
                   <Text style={styles.etapaSub}>Selecione data e horário</Text>
@@ -239,7 +191,9 @@ export default function Agenda() {
               </View>
 
               <View style={styles.etapaItem}>
-                <View style={styles.etapaNumero}><Text style={styles.etapaNumeroTexto}>4</Text></View>
+                <View style={styles.etapaNumero}>
+                  <Text style={styles.etapaNumeroTexto}>4</Text>
+                </View>
                 <View style={styles.etapaTextos}>
                   <Text style={styles.etapaTitulo}>Confirmar</Text>
                   <Text style={styles.etapaSub}>Revise e confirme</Text>
@@ -248,8 +202,12 @@ export default function Agenda() {
             </View>
 
             {/* GRID DAS COLUNAS DE AGENDAMENTO */}
-            <View style={[styles.gridAgendamento, telaGrande ? styles.gridGrande : styles.gridMobile]}>
-              
+            <View
+              style={[
+                styles.gridAgendamento,
+                telaGrande ? styles.gridGrande : styles.gridMobile,
+              ]}
+            >
               {/* COLUNA 1: SERVIÇOS */}
               <View style={styles.coluna}>
                 <Text style={styles.colunaTitulo}>Escolha o serviço</Text>
@@ -263,12 +221,22 @@ export default function Agenda() {
                         onPress={() => setServicoSel(servico)}
                       >
                         <View style={styles.opcaoInfo}>
-                          <Text style={[styles.opcaoTitulo, ativo && styles.textoDourado]}>
+                          <Text
+                            style={[
+                              styles.opcaoTitulo,
+                              ativo && styles.textoDourado,
+                            ]}
+                          >
                             {servico.nome}
                           </Text>
                           <Text style={styles.opcaoPreco}>{servico.preco}</Text>
                         </View>
-                        <View style={[styles.radioOuter, ativo && styles.radioOuterAtivo]}>
+                        <View
+                          style={[
+                            styles.radioOuter,
+                            ativo && styles.radioOuterAtivo,
+                          ]}
+                        >
                           {ativo && <View style={styles.radioInner} />}
                         </View>
                       </TouchableOpacity>
@@ -289,17 +257,35 @@ export default function Agenda() {
                     return (
                       <TouchableOpacity
                         key={barbeiro.id}
-                        style={[styles.cardBarbeiroOption, ativo && styles.cardOpcaoAtivo]}
+                        style={[
+                          styles.cardBarbeiroOption,
+                          ativo && styles.cardOpcaoAtivo,
+                        ]}
                         onPress={() => setBarbeiroSel(barbeiro)}
                       >
-                        <Image source={barbeiro.imagem} style={styles.avatarBarbeiro} />
+                        <Image
+                          source={barbeiro.imagem}
+                          style={styles.avatarBarbeiro}
+                        />
                         <View style={styles.infoBarbeiroBox}>
-                          <Text style={[styles.nomeBarbeiroOption, ativo && styles.textoDourado]}>
+                          <Text
+                            style={[
+                              styles.nomeBarbeiroOption,
+                              ativo && styles.textoDourado,
+                            ]}
+                          >
                             {barbeiro.nome}
                           </Text>
-                          <Text style={styles.ratingBarbeiro}>★ {barbeiro.avaliacao}</Text>
+                          <Text style={styles.ratingBarbeiro}>
+                            ★ {barbeiro.avaliacao}
+                          </Text>
                         </View>
-                        <View style={[styles.radioOuter, ativo && styles.radioOuterAtivo]}>
+                        <View
+                          style={[
+                            styles.radioOuter,
+                            ativo && styles.radioOuterAtivo,
+                          ]}
+                        >
                           {ativo && <View style={styles.radioInner} />}
                         </View>
                       </TouchableOpacity>
@@ -311,13 +297,15 @@ export default function Agenda() {
               {/* COLUNA 3: CALENDÁRIO E HORÁRIOS */}
               <View style={styles.coluna}>
                 <Text style={styles.colunaTitulo}>Escolha a data</Text>
-                
+
                 {/* CALENDÁRIO COMPACTO */}
                 <View style={styles.calendarioBox}>
                   <Text style={styles.mesAnoTexto}>Outubro 2026</Text>
                   <View style={styles.diasSemanaHeader}>
                     {['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'].map((d) => (
-                      <Text key={d} style={styles.diaSemanaLabel}>{d}</Text>
+                      <Text key={d} style={styles.diaSemanaLabel}>
+                        {d}
+                      </Text>
                     ))}
                   </View>
                   <View style={styles.gridDias}>
@@ -329,7 +317,12 @@ export default function Agenda() {
                           style={[styles.diaCell, ativo && styles.diaCellAtivo]}
                           onPress={() => setDiaSel(dia)}
                         >
-                          <Text style={[styles.diaTexto, ativo && styles.diaTextoAtivo]}>
+                          <Text
+                            style={[
+                              styles.diaTexto,
+                              ativo && styles.diaTextoAtivo,
+                            ]}
+                          >
                             {dia}
                           </Text>
                         </TouchableOpacity>
@@ -339,17 +332,27 @@ export default function Agenda() {
                 </View>
 
                 {/* GRID DE HORÁRIOS */}
-                <Text style={[styles.colunaTitulo, { marginTop: 16 }]}>Escolha o horário</Text>
+                <Text style={[styles.colunaTitulo, { marginTop: 16 }]}>
+                  Escolha o horário
+                </Text>
                 <View style={styles.gridHorarios}>
                   {HORARIOS_DISPONIVEIS.map((horario) => {
                     const ativo = horarioSel === horario;
                     return (
                       <TouchableOpacity
                         key={horario}
-                        style={[styles.chipHorario, ativo && styles.chipHorarioAtivo]}
+                        style={[
+                          styles.chipHorario,
+                          ativo && styles.chipHorarioAtivo,
+                        ]}
                         onPress={() => setHorarioSel(horario)}
                       >
-                        <Text style={[styles.chipHorarioTexto, ativo && styles.chipHorarioTextoAtivo]}>
+                        <Text
+                          style={[
+                            styles.chipHorarioTexto,
+                            ativo && styles.chipHorarioTextoAtivo,
+                          ]}
+                        >
                           {horario}
                         </Text>
                       </TouchableOpacity>
@@ -378,7 +381,9 @@ export default function Agenda() {
 
                   <View style={styles.resumoLinha}>
                     <Text style={styles.resumoLabel}>Data</Text>
-                    <Text style={styles.resumoValor}>{diaSel} de Outubro de 2026</Text>
+                    <Text style={styles.resumoValor}>
+                      {diaSel} de Outubro de 2026
+                    </Text>
                   </View>
 
                   <View style={styles.resumoLinha}>
@@ -388,7 +393,9 @@ export default function Agenda() {
 
                   <View style={styles.resumoLinha}>
                     <Text style={styles.resumoLabel}>Duração</Text>
-                    <Text style={styles.resumoValor}>{servicoSel.duracaoMin} min</Text>
+                    <Text style={styles.resumoValor}>
+                      {servicoSel.duracaoMin} min
+                    </Text>
                   </View>
 
                   <View style={styles.resumoDivisorDourado} />
@@ -403,91 +410,59 @@ export default function Agenda() {
                     onPress={confirmarAgendamento}
                     activeOpacity={0.85}
                   >
-                    <Text style={styles.btnConfirmarTexto}>CONFIRMAR AGENDAMENTO</Text>
+                    <Text style={styles.btnConfirmarTexto}>
+                      CONFIRMAR AGENDAMENTO
+                    </Text>
                   </TouchableOpacity>
 
-                  <Text style={styles.segurancaTexto}>Seus dados estão seguros conosco.</Text>
+                  <Text style={styles.segurancaTexto}>
+                    Seus dados estão seguros conosco.
+                  </Text>
                 </View>
               </View>
-
             </View>
           </View>
         </View>
 
-        {/* ==========================================
-            4. BARRA DE DIFERENCIAIS
-        ========================================== */}
+        {/* BARRA DE DIFERENCIAIS */}
         <View style={styles.secaoDiferenciais}>
           <View style={styles.diferenciaisInner}>
             <View style={styles.diferencialCard}>
               <Text style={styles.diferencialIcone}>📅</Text>
               <Text style={styles.diferencialTitulo}>Agendamento rápido</Text>
-              <Text style={styles.diferencialDesc}>Marque seu horário em poucos cliques.</Text>
+              <Text style={styles.diferencialDesc}>
+                Marque seu horário em poucos cliques.
+              </Text>
             </View>
 
             <View style={styles.diferencialCard}>
               <Text style={styles.diferencialIcone}>💈</Text>
               <Text style={styles.diferencialTitulo}>Profissionais qualificados</Text>
-              <Text style={styles.diferencialDesc}>Barbeiros experientes para um resultado impecável.</Text>
+              <Text style={styles.diferencialDesc}>
+                Barbeiros experientes para um resultado impecável.
+              </Text>
             </View>
 
             <View style={styles.diferencialCard}>
               <Text style={styles.diferencialIcone}>🛋️</Text>
               <Text style={styles.diferencialTitulo}>Ambiente premium</Text>
-              <Text style={styles.diferencialDesc}>Conforto e qualidade que você merece.</Text>
+              <Text style={styles.diferencialDesc}>
+                Conforto e qualidade que você merece.
+              </Text>
             </View>
 
             <View style={styles.diferencialCard}>
               <Text style={styles.diferencialIcone}>💳</Text>
               <Text style={styles.diferencialTitulo}>Pagamento facilitado</Text>
-              <Text style={styles.diferencialDesc}>Diversas formas de pagamento para sua comodidade.</Text>
+              <Text style={styles.diferencialDesc}>
+                Diversas formas de pagamento para sua comodidade.
+              </Text>
             </View>
           </View>
         </View>
 
-        {/* ==========================================
-            5. RODAPÉ PRINCIPAL
-        ========================================== */}
-        <View style={styles.rodape}>
-          <View style={styles.rodapeInner}>
-            <View style={[styles.conteudoRodape, telaGrande && styles.conteudoRodapeGrande]}>
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logoRodape}
-                resizeMode="contain"
-              />
-
-              <View style={styles.colunaCentral}>
-                <Text style={styles.nomeRodape}>Golden Barber</Text>
-                <TouchableOpacity
-                  style={styles.botaoDestaqueRodape}
-                  onPress={() => router.push('/produtos')}
-                >
-                  <Text style={styles.textoBotaoDestaqueRodape}>Explorar Loja</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.colunaEndereco}>
-                <Text style={styles.tituloEndereco}>Horário & Local</Text>
-                <Text style={styles.textoEndereco}>Segunda a Sábado: 09h às 20h</Text>
-                <Text style={styles.textoEndereco}>Av. Principal, 1000 - Centro</Text>
-                <Text style={styles.textoEndereco}>Sorocaba - SP</Text>
-              </View>
-            </View>
-
-            <View style={styles.linhaDourada} />
-
-            <View style={styles.informacoesFinais}>
-              <Text style={styles.textoFinal}>© 2026 Golden Barber</Text>
-              <TouchableOpacity onPress={abrirInstagram}>
-                <Text style={styles.textoFinal}>Instagram</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={abrirWhatsApp}>
-                <Text style={styles.textoFinal}>WhatsApp</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        {/* RODAPÉ REUTILIZÁVEL */}
+        <Footer />
       </ScrollView>
 
       {/* MODAL DE SUCESSO */}
@@ -502,9 +477,13 @@ export default function Agenda() {
             <Text style={styles.modalIcone}>✓</Text>
             <Text style={styles.modalTitulo}>Agendamento Confirmado!</Text>
             <Text style={styles.modalDesc}>
-              Seu agendamento para <Text style={{ color: CORES.dourado }}>{servicoSel.nome}</Text> com{' '}
+              Seu agendamento para{' '}
+              <Text style={{ color: CORES.dourado }}>{servicoSel.nome}</Text> com{' '}
               <Text style={{ color: CORES.dourado }}>{barbeiroSel.nome}</Text> no dia{' '}
-              <Text style={{ color: CORES.dourado }}>{diaSel} de Outubro às {horarioSel}</Text> foi reservado com sucesso.
+              <Text style={{ color: CORES.dourado }}>
+                {diaSel} de Outubro às {horarioSel}
+              </Text>{' '}
+              foi reservado com sucesso.
             </Text>
 
             <TouchableOpacity
@@ -519,7 +498,6 @@ export default function Agenda() {
           </View>
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 }
@@ -537,57 +515,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // CABEÇALHO
-  cabecalhoWrapper: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1e2422',
-  },
-  cabecalho: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    alignItems: 'center',
-    gap: 16,
-  },
-  cabecalhoGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 40,
-  },
-  logo: {
-    width: 90,
-    height: 75,
-  },
-  menu: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
-  itemMenu: {
-    paddingVertical: 6,
-  },
-  textoMenu: {
-    color: '#E8E5DF',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  textoMenuAtivo: {
-    color: CORES.dourado,
-    fontWeight: 'bold',
-  },
-
   // HERO BANNER
   heroBanner: {
     width: '100%',
     height: 280,
     justifyContent: 'center',
-    position: 'relative', // Garante o ponto de ancoragem do elemento absoluto
+    position: 'relative',
   },
   heroBannerImg: {
     opacity: 0.35,
@@ -1063,112 +996,39 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
-  // RODAPÉ
-  rodape: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    paddingVertical: 45,
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#1e2422',
-  },
-  rodapeInner: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 25,
-  },
-  conteudoRodape: {
-    alignItems: 'center',
-    gap: 28,
-  },
-  conteudoRodapeGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoRodape: {
-    width: 120,
-    height: 120,
-  },
-  colunaCentral: {
-    alignItems: 'center',
-    gap: 16,
-  },
-  nomeRodape: {
-    color: CORES.dourado,
-    fontSize: 28,
-    fontFamily: 'serif',
-    fontWeight: 'bold',
-  },
-  botaoDestaqueRodape: {
-    backgroundColor: CORES.dourado,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  textoBotaoDestaqueRodape: {
-    color: '#171510',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  colunaEndereco: {
-    alignItems: 'center',
-  },
-  tituloEndereco: {
-    color: CORES.texto,
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  textoEndereco: {
-    color: '#D5D4CF',
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  linhaDourada: {
-    height: 1,
-    backgroundColor: CORES.dourado,
-    marginTop: 32,
-    marginBottom: 20,
-    opacity: 0.6,
-  },
-  informacoesFinais: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textoFinal: {
-    color: '#77766F',
-    fontSize: 12,
-  },
-
   // MODAL
   modalBg: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.85)',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   modalCard: {
     width: '100%',
-    maxWidth: 450,
+    maxWidth: 420,
     backgroundColor: CORES.card,
     borderRadius: 8,
-    padding: 28,
-    alignItems: 'center',
     borderWidth: 1,
     borderColor: CORES.dourado,
+    padding: 28,
+    alignItems: 'center',
   },
   modalIcone: {
-    fontSize: 40,
-    color: CORES.dourado,
-    marginBottom: 12,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: CORES.dourado,
+    color: '#171510',
+    fontSize: 26,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    lineHeight: 50,
+    marginBottom: 16,
   },
   modalTitulo: {
     color: CORES.texto,
-    fontSize: 22,
-    fontFamily: 'serif',
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 12,
     textAlign: 'center',
@@ -1182,9 +1042,10 @@ const styles = StyleSheet.create({
   },
   modalBotao: {
     backgroundColor: CORES.dourado,
-    width: '100%',
-    paddingVertical: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     borderRadius: 4,
+    width: '100%',
     alignItems: 'center',
   },
   modalBotaoTexto: {

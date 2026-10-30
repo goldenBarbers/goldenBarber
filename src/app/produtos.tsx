@@ -14,6 +14,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
 // =====================================================
 // GOLDEN BARBER - LOJA DE PRODUTOS AUTORAIS
 // Ficheiro: src/app/produtos.tsx
@@ -92,10 +95,6 @@ export default function Produtos() {
     Linking.openURL(`https://wa.me/${whatsapp}`);
   };
 
-  const abrirInstagram = () => {
-    Linking.openURL('https://www.instagram.com/');
-  };
-
   // Funções de controle do carrinho
   const adicionarAoCarrinho = (id: string) => {
     setCarrinho((prev) => ({
@@ -130,64 +129,15 @@ export default function Produtos() {
     return prod.categoria === categoriaSelecionada;
   });
 
-  const navegacaoMenu: Record<string, () => void> = {
-    'Início': () => router.push('/'),
-    'Loja': () => {},
-    'Agendar': () => router.push('/agenda'),
-    'Trabalhos': () => router.push('/trabalhos'),
-    'Minha Conta': () => router.push('/perfil'),
-    'Login': () => router.push('/login'),
-  };
-
   return (
     <SafeAreaView style={styles.tela}>
       <StatusBar barStyle="light-content" />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* ==========================================
-            1. CABEÇALHO
-        ========================================== */}
-        <View style={styles.cabecalhoWrapper}>
-          <View
-            style={[
-              styles.cabecalho,
-              telaGrande && styles.cabecalhoGrande,
-            ]}
-          >
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
+        {/* CABEÇALHO REUTILIZÁVEL */}
+        <Header />
 
-            <View style={styles.menu}>
-              {['Início', 'Loja', 'Agendar', 'Trabalhos', 'Minha Conta', 'Login'].map(
-                (item) => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.itemMenu}
-                    onPress={navegacaoMenu[item]}
-                  >
-                    <Text
-                      style={[
-                        styles.textoMenu,
-                        item === 'Loja' && styles.textoMenuAtivo,
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                ),
-              )}
-            </View>
-          </View>
-        </View>
-
-        {/* ==========================================
-            2. HERO / CABEÇALHO DA LOJA
-        ========================================== */}
+        {/* HERO / CABEÇALHO DA LOJA */}
         <View style={styles.heroSecao}>
           <View style={styles.heroConteudo}>
             <Text style={styles.subtituloDourado}>COLLEZIONE PRIVATA</Text>
@@ -199,9 +149,7 @@ export default function Produtos() {
           </View>
         </View>
 
-        {/* ==========================================
-            3. FILTRO DE CATEGORIAS
-        ========================================== */}
+        {/* FILTRO DE CATEGORIAS */}
         <View style={styles.secaoFiltros}>
           <View style={styles.containerFiltros}>
             {CATEGORIAS_PRODUTOS.map((cat) => {
@@ -229,9 +177,7 @@ export default function Produtos() {
           </View>
         </View>
 
-        {/* ==========================================
-            4. GRADE DE PRODUTOS
-        ========================================== */}
+        {/* GRADE DE PRODUTOS */}
         <View style={styles.secaoProdutos}>
           <View style={styles.produtosInner}>
             <View
@@ -311,67 +257,11 @@ export default function Produtos() {
           </View>
         </View>
 
-        {/* ==========================================
-            5. RODAPÉ PRINCIPAL
-        ========================================== */}
-        <View style={styles.rodape}>
-          <View style={styles.rodapeInner}>
-            <View
-              style={[
-                styles.conteudoRodape,
-                telaGrande && styles.conteudoRodapeGrande,
-              ]}
-            >
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logoRodape}
-                resizeMode="contain"
-              />
-
-              <View style={styles.colunaCentral}>
-                <Text style={styles.nomeRodape}>Golden Barber</Text>
-                <TouchableOpacity
-                  style={styles.botaoDestaqueRodape}
-                  onPress={() => router.push('/agenda')}
-                >
-                  <Text style={styles.textoBotaoDestaqueRodape}>
-                    Agendar Horário
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.colunaEndereco}>
-                <Text style={styles.tituloEndereco}>Horário & Local</Text>
-                <Text style={styles.textoEndereco}>
-                  Segunda a Sábado: 09h às 20h
-                </Text>
-                <Text style={styles.textoEndereco}>
-                  Av. Principal, 1000 - Centro
-                </Text>
-                <Text style={styles.textoEndereco}>Sorocaba - SP</Text>
-              </View>
-            </View>
-
-            <View style={styles.linhaDourada} />
-
-            <View style={styles.informacoesFinais}>
-              <Text style={styles.textoFinal}>© 2026 Golden Barber</Text>
-
-              <TouchableOpacity onPress={abrirInstagram}>
-                <Text style={styles.textoFinal}>Instagram</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={abrirWhatsApp}>
-                <Text style={styles.textoFinal}>WhatsApp</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        {/* RODAPÉ REUTILIZÁVEL */}
+        <Footer />
       </ScrollView>
 
-      {/* ==========================================
-          6. BARRA FLUTUANTE DE RESUMO DO CARRINHO
-      ========================================== */}
+      {/* BARRA FLUTUANTE DE RESUMO DO CARRINHO */}
       {totalItens > 0 && (
         <View style={styles.containerCTAFlutuante}>
           <View style={styles.resumoCTA}>
@@ -407,51 +297,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-  },
-
-  // CABEÇALHO
-  cabecalhoWrapper: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1e2422',
-  },
-  cabecalho: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    alignItems: 'center',
-    gap: 16,
-  },
-  cabecalhoGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 40,
-  },
-  logo: {
-    width: 90,
-    height: 75,
-  },
-  menu: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
-  itemMenu: {
-    paddingVertical: 6,
-  },
-  textoMenu: {
-    color: '#E8E5DF',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  textoMenuAtivo: {
-    color: CORES.dourado,
-    fontWeight: 'bold',
   },
 
   // HERO
@@ -563,7 +408,7 @@ const styles = StyleSheet.create({
     maxWidth: 360,
   },
   cardGrande: {
-    width: '23.5%', // 4 cards por linha em telas grandes
+    width: '23.5%',
     minWidth: 260,
   },
   cardProdutoSelecionado: {
@@ -667,85 +512,6 @@ const styles = StyleSheet.create({
     color: CORES.texto,
     fontSize: 14,
     fontWeight: 'bold',
-  },
-
-  // RODAPÉ
-  rodape: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    paddingVertical: 45,
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#1e2422',
-  },
-  rodapeInner: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 25,
-  },
-  conteudoRodape: {
-    alignItems: 'center',
-    gap: 28,
-  },
-  conteudoRodapeGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoRodape: {
-    width: 120,
-    height: 120,
-  },
-  colunaCentral: {
-    alignItems: 'center',
-    gap: 16,
-  },
-  nomeRodape: {
-    color: CORES.dourado,
-    fontSize: 28,
-    fontFamily: 'serif',
-    fontWeight: 'bold',
-  },
-  botaoDestaqueRodape: {
-    backgroundColor: CORES.dourado,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  textoBotaoDestaqueRodape: {
-    color: '#171510',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  colunaEndereco: {
-    alignItems: 'center',
-  },
-  tituloEndereco: {
-    color: CORES.texto,
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  textoEndereco: {
-    color: '#D5D4CF',
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  linhaDourada: {
-    height: 1,
-    backgroundColor: CORES.dourado,
-    marginTop: 32,
-    marginBottom: 20,
-    opacity: 0.6,
-  },
-  informacoesFinais: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textoFinal: {
-    color: '#77766F',
-    fontSize: 12,
   },
 
   // BARRA FLUTUANTE CTA

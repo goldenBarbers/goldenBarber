@@ -7,12 +7,14 @@ import {
   StatusBar,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   useWindowDimensions,
 } from 'react-native';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 // =====================================================
 // GOLDEN BARBER - GALERIA DE TRABALHOS & EQUIPE
@@ -122,79 +124,20 @@ export default function Trabalhos() {
     setTelaGrande(width >= 768);
   }, [width]);
 
-  const whatsapp = '5511999999999';
-
-  const abrirWhatsApp = () => {
-    Linking.openURL(`https://wa.me/${whatsapp}`);
-  };
-
-  const abrirInstagram = () => {
-    Linking.openURL('https://www.instagram.com/');
-  };
-
   const trabalhosFiltrados =
     categoriaAtiva === 'Todos'
       ? LISTA_TRABALHOS
       : LISTA_TRABALHOS.filter((item) => item.categoria === categoriaAtiva);
-
-  const navegacaoMenu: Record<string, () => void> = {
-    'Início': () => router.push('/'),
-    'Loja': () => router.push('/produtos'),
-    'Agendar': () => router.push('/agenda'),
-    'Trabalhos': () => {},
-    'Minha Conta': () => router.push('/perfil'),
-    'Login': () => router.push('/login'),
-  };
 
   return (
     <SafeAreaView style={styles.tela}>
       <StatusBar barStyle="light-content" />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* ==========================================
-            1. CABEÇALHO
-        ========================================== */}
-        <View style={styles.cabecalhoWrapper}>
-          <View
-            style={[
-              styles.cabecalho,
-              telaGrande && styles.cabecalhoGrande,
-            ]}
-          >
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
+        {/* CABEÇALHO REUTILIZÁVEL */}
+        <Header />
 
-            <View style={styles.menu}>
-              {['Início', 'Loja', 'Agendar', 'Trabalhos', 'Minha Conta', 'Login'].map(
-                (item) => (
-                  <TouchableOpacity
-                    key={item}
-                    style={styles.itemMenu}
-                    onPress={navegacaoMenu[item]}
-                  >
-                    <Text
-                      style={[
-                        styles.textoMenu,
-                        item === 'Trabalhos' && styles.textoMenuAtivo,
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                ),
-              )}
-            </View>
-          </View>
-        </View>
-
-        {/* ==========================================
-            2. HERO DA PÁGINA
-        ========================================== */}
+        {/* HERO DA PÁGINA */}
         <View style={styles.heroSecao}>
           <View style={styles.heroConteudo}>
             <Text style={styles.subtituloDourado}>EXCELÊNCIA & TRADIÇÃO</Text>
@@ -205,9 +148,7 @@ export default function Trabalhos() {
           </View>
         </View>
 
-        {/* ==========================================
-            3. SEÇÃO NOSSOS BARBEIROS (ANTES DOS TRABALHOS)
-        ========================================== */}
+        {/* SEÇÃO NOSSOS BARBEIROS */}
         <View style={styles.secaoBarbeiros}>
           <View style={styles.barbeirosInner}>
             <Text style={styles.tituloSecao}>Nossos Barbeiros</Text>
@@ -254,9 +195,7 @@ export default function Trabalhos() {
           </View>
         </View>
 
-        {/* ==========================================
-            4. FILTRO DE CATEGORIAS DA GALERIA
-        ========================================== */}
+        {/* FILTRO DE CATEGORIAS DA GALERIA */}
         <View style={styles.secaoFiltros}>
           <View style={styles.containerFiltros}>
             <Text style={styles.tituloGaleria}>Galeria de Cortes e Barbas</Text>
@@ -284,9 +223,7 @@ export default function Trabalhos() {
           </View>
         </View>
 
-        {/* ==========================================
-            5. GALERIA DE TRABALHOS
-        ========================================== */}
+        {/* GALERIA DE TRABALHOS */}
         <View style={styles.secaoGaleria}>
           <View style={styles.galeriaInner}>
             <View
@@ -333,62 +270,8 @@ export default function Trabalhos() {
           </View>
         </View>
 
-        {/* ==========================================
-            6. RODAPÉ PRINCIPAL
-        ========================================== */}
-        <View style={styles.rodape}>
-          <View style={styles.rodapeInner}>
-            <View
-              style={[
-                styles.conteudoRodape,
-                telaGrande && styles.conteudoRodapeGrande,
-              ]}
-            >
-              <Image
-                source={require('../../assets/images/homepage/logo.png')}
-                style={styles.logoRodape}
-                resizeMode="contain"
-              />
-
-              <View style={styles.colunaCentral}>
-                <Text style={styles.nomeRodape}>Golden Barber</Text>
-                <TouchableOpacity
-                  style={styles.botaoDestaqueRodape}
-                  onPress={() => router.push('/agenda')}
-                >
-                  <Text style={styles.textoBotaoDestaqueRodape}>
-                    Agendar Horário
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.colunaEndereco}>
-                <Text style={styles.tituloEndereco}>Horário & Local</Text>
-                <Text style={styles.textoEndereco}>
-                  Segunda a Sábado: 09h às 20h
-                </Text>
-                <Text style={styles.textoEndereco}>
-                  Av. Principal, 1000 - Centro
-                </Text>
-                <Text style={styles.textoEndereco}>Sorocaba - SP</Text>
-              </View>
-            </View>
-
-            <View style={styles.linhaDourada} />
-
-            <View style={styles.informacoesFinais}>
-              <Text style={styles.textoFinal}>© 2026 Golden Barber</Text>
-
-              <TouchableOpacity onPress={abrirInstagram}>
-                <Text style={styles.textoFinal}>Instagram</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={abrirWhatsApp}>
-                <Text style={styles.textoFinal}>WhatsApp</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        {/* RODAPÉ REUTILIZÁVEL */}
+        <Footer />
       </ScrollView>
     </SafeAreaView>
   );
@@ -405,51 +288,6 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-  },
-
-  // CABEÇALHO
-  cabecalhoWrapper: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#1e2422',
-  },
-  cabecalho: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    alignItems: 'center',
-    gap: 16,
-  },
-  cabecalhoGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 40,
-  },
-  logo: {
-    width: 90,
-    height: 75,
-  },
-  menu: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
-  itemMenu: {
-    paddingVertical: 6,
-  },
-  textoMenu: {
-    color: '#E8E5DF',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  textoMenuAtivo: {
-    color: CORES.dourado,
-    fontWeight: 'bold',
   },
 
   // HERO
@@ -534,15 +372,15 @@ const styles = StyleSheet.create({
   },
   cardBarbeiroMobile: {
     width: '100%',
-    maxWidth: 260, // <-- Altere aqui para diminuir no celular (antes era 340)
+    maxWidth: 260,
   },
   cardBarbeiroGrande: {
     flex: 1,
-    maxWidth: 280, // <-- Altere aqui para diminuir no computador (antes era 360)
+    maxWidth: 280,
   },
   imagemBarbeiroContainer: {
     width: '100%',
-    height: 200, // <-- Altere aqui para diminuir a altura da foto (antes era 280)
+    height: 200,
     backgroundColor: '#1c1f1e',
   },
   imagemBarbeiro: {
@@ -550,12 +388,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   infoBarbeiro: {
-    padding: 14, // <-- Diminua o espaçamento interno (antes era 20)
+    padding: 14,
     alignItems: 'center',
   },
   nomeBarbeiro: {
     color: CORES.dourado,
-    fontSize: 18, // <-- Opcional: diminua o tamanho do nome (antes era 22)
+    fontSize: 18,
     fontFamily: 'serif',
     fontWeight: 'bold',
     marginBottom: 4,
@@ -718,84 +556,5 @@ const styles = StyleSheet.create({
     color: CORES.dourado,
     fontSize: 13,
     fontWeight: '600',
-  },
-
-  // RODAPÉ
-  rodape: {
-    width: '100%',
-    backgroundColor: CORES.fundo,
-    paddingVertical: 45,
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#1e2422',
-  },
-  rodapeInner: {
-    width: '100%',
-    maxWidth: 1200,
-    paddingHorizontal: 25,
-  },
-  conteudoRodape: {
-    alignItems: 'center',
-    gap: 28,
-  },
-  conteudoRodapeGrande: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoRodape: {
-    width: 120,
-    height: 120,
-  },
-  colunaCentral: {
-    alignItems: 'center',
-    gap: 16,
-  },
-  nomeRodape: {
-    color: CORES.dourado,
-    fontSize: 28,
-    fontFamily: 'serif',
-    fontWeight: 'bold',
-  },
-  botaoDestaqueRodape: {
-    backgroundColor: CORES.dourado,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  textoBotaoDestaqueRodape: {
-    color: '#171510',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  colunaEndereco: {
-    alignItems: 'center',
-  },
-  tituloEndereco: {
-    color: CORES.texto,
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  textoEndereco: {
-    color: '#D5D4CF',
-    fontSize: 13,
-    lineHeight: 20,
-    textAlign: 'center',
-  },
-  linhaDourada: {
-    height: 1,
-    backgroundColor: CORES.dourado,
-    marginTop: 32,
-    marginBottom: 20,
-    opacity: 0.6,
-  },
-  informacoesFinais: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textoFinal: {
-    color: '#77766F',
-    fontSize: 12,
   },
 });
